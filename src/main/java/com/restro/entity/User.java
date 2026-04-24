@@ -24,18 +24,21 @@ public class User extends Audit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
 
     @Column(unique = true, nullable = false)
     private String email;
-
     private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private boolean active = true;
+	@Enumerated(EnumType.STRING)
+	private Gender gender;
+
+	private String mobileNumber;
+	private String address;
+	private boolean active = true;
 
 	public Long getId() {
 		return id;
@@ -77,6 +80,30 @@ public class User extends Audit {
 		this.role = role;
 	}
 
+	public Gender getGender() {
+		return gender;
+	}
+
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
 	public boolean isActive() {
 		return active;
 	}
@@ -87,9 +114,16 @@ public class User extends Audit {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", email=" + email + ", password=" + password + ", role=" + role
-				+ ", active=" + active + "]";
+		return "User{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", email='" + email + '\'' +
+				", password='" + password + '\'' +
+				", role=" + role +
+				", gender=" + gender +
+				", mobileNumber='" + mobileNumber + '\'' +
+				", address='" + address + '\'' +
+				", active=" + active +
+				'}';
 	}
-        
-    
 }

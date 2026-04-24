@@ -1,5 +1,6 @@
 package com.restro.controller;
 
+import com.restro.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,16 +23,15 @@ public class AuthController {
 		this.authService = authService;
 	}
 
-    // ✅ Register API
+    //  Register API
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
-
-        authService.register(request);
-
-        return ResponseEntity.ok("User registered successfully");
+    public ResponseEntity<ApiResponse> register(@RequestBody RegisterRequest request) {
+        ApiResponse response = authService.register(request);
+        return ResponseEntity.status(response.getStatus())
+                .body(response);
     }
 
-    // ✅ Login API
+    //  Login API
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
 

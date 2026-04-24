@@ -14,8 +14,7 @@ public class AuthResponse {
 
 	private String token;
 	private String role;
-	
-	
+
 	public String getToken() {
 		return token;
 	}
@@ -36,7 +35,5 @@ public class AuthResponse {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
 
 }
