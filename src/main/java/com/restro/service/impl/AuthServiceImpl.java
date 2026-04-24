@@ -29,16 +29,23 @@ public class AuthServiceImpl implements AuthService {
         this.jwtUtil = jwtUtil;
     }
 
-	@Override
-	public void register(RegisterRequest request) {
-		User user = new User();
-		user.setName(request.getName());
-		user.setEmail(request.getEmail());
-		user.setPassword(passwordEncoder.encode(request.getPassword()));
-		user.setRole(Role.CUSTOMER);
+    @Override
+    public void register(RegisterRequest request) {
 
-	        userRepo.save(user);		
-	}
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        // ✅ FIX: take role from request
+        user.setRole(
+                request.getRole() != null
+                        ? Role.valueOf(request.getRole().toUpperCase())
+                        : Role.CUSTOMER
+        );
+
+        userRepo.save(user);
+    }
 
 	
 

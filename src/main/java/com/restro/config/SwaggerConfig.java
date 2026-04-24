@@ -1,20 +1,36 @@
 package com.restro.config;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
 
 @Configuration
 public class SwaggerConfig {
 
     @Bean
     public OpenAPI customOpenAPI() {
+
+        SecurityScheme securityScheme = new SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT");
+
+        SecurityRequirement securityRequirement =
+                new SecurityRequirement().addList("BearerAuth");
+
         return new OpenAPI()
                 .info(new Info()
                         .title("RESTRO API")
                         .version("1.0")
-                        .description("Restaurant Management System APIs"));
+                        .description("Restaurant Management System APIs"))
+                .components(new Components()
+                        .addSecuritySchemes("BearerAuth", securityScheme))
+                .addSecurityItem(securityRequirement);
     }
+
+
 }
