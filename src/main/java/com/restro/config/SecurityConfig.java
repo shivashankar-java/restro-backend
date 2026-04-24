@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableMethodSecurity
@@ -18,25 +19,49 @@ public class SecurityConfig {
 
 		http
 				.csrf(csrf -> csrf.disable())
-				.addFilterBefore(new JwtFilter(jwtUtil),
-						org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
+
+				.addFilterBefore(
+						new JwtFilter(jwtUtil),
+						UsernamePasswordAuthenticationFilter.class
+				)
+
 				.authorizeHttpRequests(auth -> auth
+
+						// Public APIs
 						.requestMatchers("/auth/**").permitAll()
-						.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
-						//  Public GET menu
-						.requestMatchers(HttpMethod.GET, "/menu/**").permitAll()
+						// Swagger
+						.requestMatchers(
+								"/swagger-ui/**",
+								"/v3/api-docs/**",
+								"/swagger-ui.html"
+						).permitAll()
 
+						// Admin only APIs
 						.requestMatchers("/admin/**").hasRole("ADMIN")
-						.requestMatchers("/user/**").hasAnyRole("CUSTOMER", "ADMIN")
+
+						// Customer + Admin APIs
+						.requestMatchers("/menu/**").hasAnyRole("ADMIN", "CUSTOMER")
+						.requestMatchers("/cart/**").hasRole("CUSTOMER")
+						.requestMatchers("/order/**").hasAnyRole("ADMIN", "CUSTOMER")
+
+						// Restaurant APIs
+						// POST -> ADMIN only
+						.requestMatchers(HttpMethod.POST, "/api/restaurants", "/api/restaurants/**")
+						.hasRole("ADMIN")
+
+						.requestMatchers(HttpMethod.GET, "/api/restaurants", "/api/restaurants/**")
+						.hasAnyRole("ADMIN", "CUSTOMER")
+
+						// Remaining secured
 						.anyRequest().authenticated()
 				);
 
 		return http.build();
 	}
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 }

@@ -3,9 +3,11 @@ package com.restro.entity.base;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 
+@MappedSuperclass
 public abstract class Audit {
 
     @Column(updatable = false)

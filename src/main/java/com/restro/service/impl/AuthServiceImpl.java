@@ -35,35 +35,37 @@ public class AuthServiceImpl implements AuthService {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setPassword(
+                passwordEncoder.encode(request.getPassword()));
 
-        // ✅ FIX: take role from request
-        user.setRole(
-                request.getRole() != null
-                        ? Role.valueOf(request.getRole().toUpperCase())
-                        : Role.CUSTOMER
-        );
+        // Always CUSTOMER
+        user.setRole(Role.CUSTOMER);
 
         userRepo.save(user);
     }
 
-	
-
-	@Override
-	public AuthResponse login(LoginRequest request) {
+    @Override
+    public AuthResponse login(LoginRequest request) {
 
         User user = userRepo.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword())) {
+
             throw new RuntimeException("Invalid password");
         }
 
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+        String token = jwtUtil.generateToken(
+                user.getEmail(),
+                user.getRole().name()
+        );
 
-        AuthResponse res = new AuthResponse();
-        res.setToken(token);
-        res.setRole(user.getRole().name());
-        return res;
-	}
+        AuthResponse response = new AuthResponse();
+        response.setToken(token);
+        response.setRole(user.getRole().name());
+
+        return response;
+    }
 }

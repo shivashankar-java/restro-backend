@@ -1,12 +1,15 @@
 package com.restro.entity;
 
+import com.restro.entity.base.Audit;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Entity
 @Table(name = "menu_items")
 @Data
-public class MenuItem {
+public class MenuItem extends Audit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +23,9 @@ public class MenuItem {
 
 	private Boolean available;
 	private Double rating;
+
+	@ManyToMany(mappedBy = "menuItems")
+	private List<Restaurant> restaurants;
 
 	public Long getId() {
 		return id;
@@ -75,5 +81,13 @@ public class MenuItem {
 
 	public void setRating(Double rating) {
 		this.rating = rating;
+	}
+
+	public List<Restaurant> getRestaurants() {
+		return restaurants;
+	}
+
+	public void setRestaurants(List<Restaurant> restaurants) {
+		this.restaurants = restaurants;
 	}
 }

@@ -2,6 +2,7 @@ package com.restro.service.impl;
 
 import java.util.List;
 
+import com.restro.entity.Category;
 import org.springframework.stereotype.Service;
 
 import com.restro.dto.request.MenuRequest;
@@ -56,5 +57,12 @@ public class MenuServiceImpl implements MenuService {
     	menuRepository.deleteById(id);
     }
 
+    @Override
+    public List<MenuResponse> getMenuByCategory(Category category) {
+
+        List<MenuItem> items = menuRepository.findByCategory(category);
+
+        return menuMapper.toResponseList(items);
+    }
 
 }
