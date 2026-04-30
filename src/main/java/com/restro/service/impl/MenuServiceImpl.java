@@ -9,16 +9,16 @@ import com.restro.dto.request.MenuRequest;
 import com.restro.dto.response.MenuResponse;
 import com.restro.entity.MenuItem;
 import com.restro.mapper.MenuMapper;
-import com.restro.repository.MenuRepository;
+import com.restro.repository.MenuItemRepository;
 import com.restro.service.MenuService;
 
 @Service
 public class MenuServiceImpl implements MenuService {
 
-    private final MenuRepository menuRepository;
+    private final MenuItemRepository menuRepository;
     private final MenuMapper menuMapper;
 
-    public MenuServiceImpl(MenuRepository menuRepository, MenuMapper menuMapper) {
+    public MenuServiceImpl(MenuItemRepository menuRepository, MenuMapper menuMapper) {
 		super();
 		this.menuRepository = menuRepository;
 		this.menuMapper = menuMapper;

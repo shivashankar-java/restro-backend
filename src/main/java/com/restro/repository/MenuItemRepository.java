@@ -7,7 +7,7 @@ import com.restro.entity.MenuItem;
 
 import java.util.List;
 
-public interface MenuRepository extends JpaRepository<MenuItem, Long> {
+public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
 
     List<MenuItem> findByCategory(Category category);
 }

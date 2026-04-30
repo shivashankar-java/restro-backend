@@ -43,7 +43,7 @@ public class SecurityConfig {
 
 						// Customer + Admin APIs
 						.requestMatchers("/menu/**").hasAnyRole("ADMIN", "CUSTOMER")
-						.requestMatchers("/cart/**").hasRole("CUSTOMER")
+						.requestMatchers("/api/cart/**").hasRole("CUSTOMER")
 						.requestMatchers("/order/**").hasAnyRole("ADMIN", "CUSTOMER")
 
 						// Restaurant APIs

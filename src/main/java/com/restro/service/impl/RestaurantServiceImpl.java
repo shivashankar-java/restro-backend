@@ -5,7 +5,7 @@ import com.restro.dto.response.RestaurantResponse;
 import com.restro.entity.MenuItem;
 import com.restro.entity.Restaurant;
 import com.restro.mapper.RestaurantMapper;
-import com.restro.repository.MenuRepository;
+import com.restro.repository.MenuItemRepository;
 import com.restro.repository.RestaurantRepository;
 import com.restro.service.RestaurantService;
 import org.springframework.stereotype.Service;
@@ -16,12 +16,12 @@ import java.util.List;
 public class RestaurantServiceImpl implements RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
-    private final MenuRepository menuRepository;
+    private final MenuItemRepository menuRepository;
     private final RestaurantMapper restaurantMapper;
 
     public RestaurantServiceImpl(
             RestaurantRepository restaurantRepository,
-            MenuRepository menuRepository,
+            MenuItemRepository menuRepository,
             RestaurantMapper restaurantMapper) {
         this.restaurantRepository = restaurantRepository;
         this.menuRepository = menuRepository;
