@@ -44,7 +44,15 @@ public class SecurityConfig {
 						// Customer + Admin APIs
 						.requestMatchers("/menu/**").hasAnyRole("ADMIN", "CUSTOMER")
 						.requestMatchers("/api/cart/**").hasRole("CUSTOMER")
-						.requestMatchers("/order/**").hasAnyRole("ADMIN", "CUSTOMER")
+						.requestMatchers("/api/orders/**").hasRole("CUSTOMER")
+
+						// COUPONS
+						.requestMatchers(HttpMethod.POST, "/api/coupons/**").hasRole("ADMIN")
+						.requestMatchers(HttpMethod.PUT, "/api/coupons/**").hasRole("ADMIN")
+						.requestMatchers(HttpMethod.DELETE, "/api/coupons/**").hasRole("ADMIN")
+						.requestMatchers(HttpMethod.GET, "/api/coupons/**").hasAnyRole("ADMIN", "CUSTOMER")
+
+						.requestMatchers(HttpMethod.POST, "/api/coupons/apply").hasRole("CUSTOMER")
 
 						// Restaurant APIs
 						// POST -> ADMIN only

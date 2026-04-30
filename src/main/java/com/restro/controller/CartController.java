@@ -21,50 +21,48 @@ public class CartController {
     // CUSTOMER only → Add item to cart
     @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/add")
-    public ResponseEntity<CartResponse> addToCart(@RequestBody AddToCartRequest request) {
-
-        return ResponseEntity.ok(
-                cartService.addToCart(request)
-        );
+    public ResponseEntity<CartResponse> addToCart(
+            @RequestBody AddToCartRequest request) {
+        return ResponseEntity.ok(cartService.addToCart(request));
     }
 
     // CUSTOMER only → Get active cart
     @PreAuthorize("hasRole('CUSTOMER')")
-    @GetMapping("/{userId}")
-    public ResponseEntity<CartResponse> getActiveCart(@PathVariable Long userId) {
+    @GetMapping
+    public ResponseEntity<CartResponse> getActiveCart() {
 
         return ResponseEntity.ok(
-                cartService.getActiveCart(userId)
+                cartService.getActiveCart()
         );
     }
 
-    // CUSTOMER only → Update cart item quantity
+    // UPDATE CART ITEM QTY
     @PreAuthorize("hasRole('CUSTOMER')")
-    @PutMapping("/update")
-    public ResponseEntity<CartResponse> updateCartItem(@RequestBody UpdateCartItemRequest request) {
+    @PutMapping("/item")
+    public ResponseEntity<CartResponse> updateCartItem(
+            @RequestBody UpdateCartItemRequest request) {
 
         return ResponseEntity.ok(
-                cartService.updateCartItem(request)
+                cartService.updateItemQuantity(request)
         );
     }
 
-    // CUSTOMER only → Remove single cart item
+    // REMOVE SINGLE ITEM
     @PreAuthorize("hasRole('CUSTOMER')")
-    @DeleteMapping("/remove/{cartItemId}")
-    public ResponseEntity<String> removeCartItem(@PathVariable Long cartItemId) {
+    @DeleteMapping("/item/{cartItemId}")
+    public ResponseEntity<CartResponse> removeCartItem(@PathVariable Long cartItemId) {
 
         return ResponseEntity.ok(
-                cartService.removeCartItem(cartItemId)
+                cartService.removeItem(cartItemId)
         );
     }
 
-    // CUSTOMER only → Clear full cart
+    // CLEAR CART
     @PreAuthorize("hasRole('CUSTOMER')")
-    @DeleteMapping("/clear/{userId}")
-    public ResponseEntity<String> clearCart(@PathVariable Long userId) {
-
+    @DeleteMapping("/clear")
+    public ResponseEntity<String> clearCart() {
         return ResponseEntity.ok(
-                cartService.clearCart(userId)
+                cartService.clearCart()
         );
     }
 }

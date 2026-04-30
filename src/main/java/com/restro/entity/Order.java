@@ -1,6 +1,5 @@
 package com.restro.entity;
 
-
 import com.restro.entity.base.Audit;
 import jakarta.persistence.*;
 import lombok.*;
@@ -9,54 +8,42 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
-@Table(name = "cart")
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "orders")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class Cart extends Audit{
+public class Order extends Audit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // One customer → one active cart
+    @Column(unique = true, nullable = false)
+    private String orderNumber;
+
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    // Restaurant from which items are added
     @ManyToOne
-    @JoinColumn(name = "restaurant_id", nullable = false)
+    @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
-    // Cart items
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CartItem> cartItems;
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> orderItems;
 
-    // Pricing
     private BigDecimal subTotal;
-
     private BigDecimal deliveryFee;
-
     private BigDecimal taxAmount;
-
     private BigDecimal discountAmount;
-
     private BigDecimal grandTotal;
 
-    // Coupon support
-    private String appliedCouponCode;
-
-    // Delivery info
     private String deliveryAddress;
 
-    private String deliveryInstructions;
-
-    // Cart status
     @Enumerated(EnumType.STRING)
-    private CartStatus status; // ACTIVE, CHECKED_OUT, ABANDONED
+    private OrderStatus status;
 
     public Long getId() {
         return id;
@@ -64,6 +51,14 @@ public class Cart extends Audit{
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
     }
 
     public User getUser() {
@@ -82,12 +77,12 @@ public class Cart extends Audit{
         this.restaurant = restaurant;
     }
 
-    public List<CartItem> getCartItems() {
-        return cartItems;
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
     }
 
-    public void setCartItems(List<CartItem> cartItems) {
-        this.cartItems = cartItems;
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 
     public BigDecimal getSubTotal() {
@@ -130,14 +125,6 @@ public class Cart extends Audit{
         this.grandTotal = grandTotal;
     }
 
-    public String getAppliedCouponCode() {
-        return appliedCouponCode;
-    }
-
-    public void setAppliedCouponCode(String appliedCouponCode) {
-        this.appliedCouponCode = appliedCouponCode;
-    }
-
     public String getDeliveryAddress() {
         return deliveryAddress;
     }
@@ -146,19 +133,11 @@ public class Cart extends Audit{
         this.deliveryAddress = deliveryAddress;
     }
 
-    public String getDeliveryInstructions() {
-        return deliveryInstructions;
-    }
-
-    public void setDeliveryInstructions(String deliveryInstructions) {
-        this.deliveryInstructions = deliveryInstructions;
-    }
-
-    public CartStatus getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(CartStatus status) {
+    public void setStatus(OrderStatus status) {
         this.status = status;
     }
 }

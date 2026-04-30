@@ -1,30 +1,36 @@
 package com.restro.dto.response;
 
-import lombok.Data;
-
 import java.math.BigDecimal;
 import java.util.List;
 
-@Data
-public class CartResponse {
-    private Long cartId;
+public class OrderResponse {
+
+    private Long orderId;
+    private String orderNumber;
     private String restaurantName;
-    private List<CartItemResponse> items;
+    private List<OrderItemResponse> items;
     private BigDecimal subTotal;
     private BigDecimal deliveryFee;
     private BigDecimal taxAmount;
     private BigDecimal discountAmount;
     private BigDecimal grandTotal;
     private String deliveryAddress;
-    private String appliedCouponCode;
     private String status;
 
-    public Long getCartId() {
-        return cartId;
+    public Long getOrderId() {
+        return orderId;
     }
 
-    public void setCartId(Long cartId) {
-        this.cartId = cartId;
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
     }
 
     public String getRestaurantName() {
@@ -35,11 +41,11 @@ public class CartResponse {
         this.restaurantName = restaurantName;
     }
 
-    public List<CartItemResponse> getItems() {
+    public List<OrderItemResponse> getItems() {
         return items;
     }
 
-    public void setItems(List<CartItemResponse> items) {
+    public void setItems(List<OrderItemResponse> items) {
         this.items = items;
     }
 
@@ -89,14 +95,6 @@ public class CartResponse {
 
     public void setDeliveryAddress(String deliveryAddress) {
         this.deliveryAddress = deliveryAddress;
-    }
-
-    public String getAppliedCouponCode() {
-        return appliedCouponCode;
-    }
-
-    public void setAppliedCouponCode(String appliedCouponCode) {
-        this.appliedCouponCode = appliedCouponCode;
     }
 
     public String getStatus() {

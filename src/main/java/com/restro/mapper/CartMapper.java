@@ -16,7 +16,6 @@ public interface CartMapper {
     CartItemResponse toCartItemResponse(CartItem cartItem);
 
     @Mapping(target = "cartId", source = "cart.id")
-    @Mapping(target = "userId", source = "cart.user.id")
     @Mapping(target = "restaurantName", source = "cart.restaurant.name")
     @Mapping(target = "items", source = "cart.cartItems")
     @Mapping(target = "status", source = "cart.status")

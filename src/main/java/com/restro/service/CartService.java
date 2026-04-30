@@ -8,11 +8,11 @@ public interface CartService {
 
     CartResponse addToCart(AddToCartRequest request);
 
-    CartResponse getActiveCart(Long userId);
+    CartResponse getActiveCart();
 
-    CartResponse updateCartItem(UpdateCartItemRequest request);
+    CartResponse updateItemQuantity(UpdateCartItemRequest request);
 
-    String removeCartItem(Long cartItemId);
+    CartResponse removeItem(Long cartItemId);
 
-    String clearCart(Long userId);
+    String clearCart();
 }

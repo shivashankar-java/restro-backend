@@ -1,5 +1,6 @@
 package com.restro.service.impl;
 
+import com.restro.config.JwtUtil;
 import com.restro.dto.request.AddToCartRequest;
 import com.restro.dto.request.UpdateCartItemRequest;
 import com.restro.dto.response.CartResponse;
@@ -8,6 +9,7 @@ import com.restro.mapper.CartMapper;
 import com.restro.repository.*;
 import com.restro.service.CartService;
 import com.restro.entity.MenuItem;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -22,60 +24,77 @@ public class CartServiceImpl implements CartService {
     private final MenuItemRepository menuItemRepository;
     private final RestaurantRepository restaurantRepository;
     private final CartMapper cartMapper;
+    private final JwtUtil jwtUtil;
 
-    public CartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository, UserRepository userRepository, MenuItemRepository menuItemRepository, RestaurantRepository restaurantRepository, CartMapper cartMapper) {
+    public CartServiceImpl(CartRepository cartRepository, CartItemRepository cartItemRepository, UserRepository userRepository, MenuItemRepository menuItemRepository, RestaurantRepository restaurantRepository, CartMapper cartMapper, JwtUtil jwtUtil) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.userRepository = userRepository;
         this.menuItemRepository = menuItemRepository;
         this.restaurantRepository = restaurantRepository;
         this.cartMapper = cartMapper;
+        this.jwtUtil = jwtUtil;
+    }
+
+    // 🔥 Get current user from JWT (SecurityContext)
+    private User getLoggedInUser() {
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    // 🔥 Get ACTIVE cart
+    private Cart getActiveCartEntity(User user) {
+        return cartRepository.findByUserAndStatus(user, CartStatus.ACTIVE)
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
     }
 
     @Override
     public CartResponse addToCart(AddToCartRequest request) {
 
-        // Fetch User
-        User user = userRepository.findById(request.getUserId())
+        // Step 1: Get user from SecurityContext (set by JwtFilter)
+        String email = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Fetch Menu Item
+        // Step 2: Fetch Menu Item
         MenuItem menuItem = menuItemRepository.findById(request.getMenuId())
                 .orElseThrow(() -> new RuntimeException("Menu item not found"));
 
-        // Fetch Restaurant
+        // Step 3: Fetch Restaurant
         Restaurant restaurant = restaurantRepository.findById(request.getRestaurantId())
                 .orElseThrow(() -> new RuntimeException("Restaurant not found"));
 
-        // Get active cart or create new cart
-        Cart cart = cartRepository
-                .findByUserAndStatus(user, CartStatus.ACTIVE)
-                .orElse(null);
+        // Step 4: Get or create ACTIVE cart
+        Cart cart = cartRepository.findByUser(user)
+                .orElseGet(() -> {
+                    Cart newCart = new Cart();
+                    newCart.setUser(user);
+                    newCart.setStatus(CartStatus.ACTIVE);
+                    newCart.setCartItems(new ArrayList<>());
+                    newCart.setDeliveryFee(BigDecimal.valueOf(40));
+                    newCart.setTaxAmount(BigDecimal.valueOf(20));
+                    newCart.setDiscountAmount(BigDecimal.ZERO);
+                    return cartRepository.save(newCart);
+                });
 
-        if (cart == null) {
-            cart = new Cart();
-            cart.setUser(user);
+        // Step 5: Business rule → one restaurant per cart
+        // 🔥 IMPORTANT: attach restaurant to cart
+        if (cart.getRestaurant() == null) {
             cart.setRestaurant(restaurant);
-            cart.setCartItems(new ArrayList<>());
-            cart.setDeliveryFee(BigDecimal.valueOf(40));
-            cart.setTaxAmount(BigDecimal.valueOf(20));
-            cart.setDiscountAmount(BigDecimal.ZERO);
-            cart.setDeliveryAddress(request.getDeliveryAddress());
-            cart.setStatus(CartStatus.ACTIVE);
-
-            // IMPORTANT → Save first
-            cart = cartRepository.save(cart);
-        }
-
-        // Restrict one restaurant per cart
-        if (cart.getRestaurant() != null &&
-                !cart.getRestaurant().getId().equals(restaurant.getId())) {
+        } else if (!cart.getRestaurant().getId().equals(restaurant.getId())) {
             throw new RuntimeException(
-                    "You can only order from one restaurant at a time"
+                    "Your cart contains items from another restaurant. Clear cart to continue."
             );
         }
 
-        // Check if same item already exists
+        // Step 6: Check existing item
         CartItem existingItem = cartItemRepository
                 .findByCartAndMenuItem(cart, menuItem)
                 .orElse(null);
@@ -95,9 +114,7 @@ public class CartServiceImpl implements CartService {
 
         } else {
 
-            // Create new cart item
             CartItem cartItem = new CartItem();
-
             cartItem.setCart(cart);
             cartItem.setMenuItem(menuItem);
             cartItem.setQuantity(request.getQuantity());
@@ -118,83 +135,13 @@ public class CartServiceImpl implements CartService {
             cart.getCartItems().add(cartItem);
         }
 
-        // Recalculate totals
+        // Step 7: Recalculate cart totals
         recalculate(cart);
 
-        // Save cart
+        // Step 8: Save cart
         cartRepository.save(cart);
 
         return cartMapper.toCartResponse(cart);
-    }
-
-    @Override
-    public CartResponse getActiveCart(Long userId) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Cart cart = cartRepository
-                .findByUserAndStatus(user, CartStatus.ACTIVE)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
-
-        return cartMapper.toCartResponse(cart);
-    }
-
-    @Override
-    public CartResponse updateCartItem(UpdateCartItemRequest request) {
-
-        CartItem item = cartItemRepository.findById(request.getCartItemId())
-                .orElseThrow(() -> new RuntimeException("Cart item not found"));
-
-        item.setQuantity(request.getQuantity());
-
-        item.setTotalPrice(
-                item.getPricePerUnit()
-                        .multiply(BigDecimal.valueOf(request.getQuantity()))
-        );
-
-        cartItemRepository.save(item);
-
-        recalculate(item.getCart());
-        cartRepository.save(item.getCart());
-
-        return cartMapper.toCartResponse(item.getCart());
-    }
-
-    @Override
-    public String removeCartItem(Long cartItemId) {
-
-        CartItem item = cartItemRepository.findById(cartItemId)
-                .orElseThrow(() -> new RuntimeException("Cart item not found"));
-
-        Cart cart = item.getCart();
-
-        cartItemRepository.delete(item);
-
-        recalculate(cart);
-        cartRepository.save(cart);
-
-        return "Cart item removed successfully";
-    }
-
-    @Override
-    public String clearCart(Long userId) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Cart cart = cartRepository
-                .findByUserAndStatus(user, CartStatus.ACTIVE)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
-
-        cartItemRepository.deleteAll(cart.getCartItems());
-
-        cart.setSubTotal(BigDecimal.ZERO);
-        cart.setGrandTotal(BigDecimal.ZERO);
-
-        cartRepository.save(cart);
-
-        return "Cart cleared successfully";
     }
 
     private void recalculate(Cart cart) {
@@ -212,4 +159,75 @@ public class CartServiceImpl implements CartService {
                         .subtract(cart.getDiscountAmount())
         );
     }
+
+    @Override
+    public CartResponse getActiveCart() {
+
+        User user = getLoggedInUser();
+        Cart cart = getActiveCartEntity(user);
+
+        return cartMapper.toCartResponse(cart);
+    }
+
+    // =========================
+    // 2. UPDATE ITEM QTY
+    // =========================
+    @Override
+    public CartResponse updateItemQuantity(UpdateCartItemRequest request) {
+
+        CartItem item = cartItemRepository.findById(request.getCartItemId())
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+
+        item.setQuantity(request.getQuantity());
+
+        item.setTotalPrice(
+                item.getPricePerUnit()
+                        .multiply(BigDecimal.valueOf(request.getQuantity()))
+        );
+
+        cartItemRepository.save(item);
+
+        recalculate(item.getCart());
+
+        return cartMapper.toCartResponse(item.getCart());
+    }
+
+    // =========================
+    // 3. REMOVE ITEM
+    // =========================
+    @Override
+    public CartResponse removeItem(Long cartItemId) {
+
+        CartItem item = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+
+        Cart cart = item.getCart();
+
+        cartItemRepository.delete(item);
+
+        recalculate(cart);
+
+        return cartMapper.toCartResponse(cart);
+    }
+
+    // =========================
+    // 4. CLEAR CART
+    // =========================
+    @Override
+    public String clearCart() {
+
+        User user = getLoggedInUser();
+        Cart cart = getActiveCartEntity(user);
+
+        cartItemRepository.deleteAll(cart.getCartItems());
+
+        cart.setSubTotal(BigDecimal.ZERO);
+        cart.setGrandTotal(BigDecimal.ZERO);
+
+        cartRepository.save(cart);
+
+        return "Cart cleared successfully";
+    }
+
+
 }
