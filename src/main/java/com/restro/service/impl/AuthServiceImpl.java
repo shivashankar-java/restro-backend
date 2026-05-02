@@ -49,32 +49,31 @@ public class AuthServiceImpl implements AuthService {
 
         logger.info("Register request received for user: {}", request.getName());
 
+        // 1. Validate email/mobile
         if ((request.getEmail() == null || request.getEmail().isBlank()) &&
                 (request.getMobileNumber() == null || request.getMobileNumber().isBlank())) {
 
             logger.warn("Registration failed: Email and Mobile Number both are missing");
-
             return new ApiResponse(400, "Either email or mobile number is required");
         }
 
+        // 2. Check email exists
         if (request.getEmail() != null && !request.getEmail().isBlank()) {
             if (userRepository.existsByEmail(request.getEmail())) {
-
                 logger.warn("Registration failed: Email already exists -> {}", request.getEmail());
-
                 return new ApiResponse(409, "Email already exists");
             }
         }
 
+        // 3. Check mobile exists
         if (request.getMobileNumber() != null && !request.getMobileNumber().isBlank()) {
             if (userRepository.existsByMobileNumber(request.getMobileNumber())) {
-
-                logger.warn("Registration failed: Mobile number already exists -> {}", request.getMobileNumber());
-
+                logger.warn("Registration failed: Mobile already exists -> {}", request.getMobileNumber());
                 return new ApiResponse(409, "Mobile number already exists");
             }
         }
 
+        // 4. Create user
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
@@ -82,16 +81,33 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.CUSTOMER);
         user.setGender(request.getGender());
-        user.setAddress(request.getAddress());
         user.setActive(true);
 
         userRepository.save(user);
 
         logger.info("User registered successfully: {}", request.getEmail());
 
+        // 5. Send simple welcome email (NO OTP)
+        if (user.getEmail() != null && !user.getEmail().isBlank()) {
+
+            emailService.sendSimpleEmail(
+                    user.getEmail(),
+                    "Welcome to RESTRO 🎉",
+                    "Hello " + user.getName() + ",\n\n" +
+                            "Thank you for registering with RESTRO.\n" +
+                            "Your account has been created successfully.\n\n" +
+                            "We’re happy to have you with us!\n\n" +
+                            "Thank you once again for choosing RESTRO 🙌\n\n" +
+                            "Happy Ordering! 🍕🍔🍟\n\n" +
+                            "Enjoy ordering delicious food 🍽️\n\n" +
+                            "Regards,\nRESTRO Team"
+            );
+        }
+
+        // 6. Response
         return new ApiResponse(
                 200,
-                "Registration successful. Please check your email for verification details."
+                "Registration successful. Welcome email sent."
         );
     }
 

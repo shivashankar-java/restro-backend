@@ -24,12 +24,10 @@ public class EmailServiceImpl implements EmailService {
         switch (purpose) {
 
             case REGISTRATION:
-                subject = "Welcome to Restro - Email Verification OTP";
+                subject = "Welcome to Restro........";
                 body =
                         "Hello User,\n\n" +
                                 "Thank you for registering with Restro.\n\n" +
-                                "Your OTP for email verification is: " + otp + "\n" +
-                                "This OTP is valid for 10 minutes.\n\n" +
                                 "Please verify your email to complete your registration.\n\n" +
                                 "If you did not create this account, please ignore this email.\n\n" +
                                 "Thanks,\nRestro Team";
@@ -71,4 +69,22 @@ public class EmailServiceImpl implements EmailService {
             ex.printStackTrace();
         }
     }
+
+    @Override
+    public void sendSimpleEmail(String toEmail, String subject, String body) {
+
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject(subject);
+            message.setText(body);
+
+            mailSender.send(message);
+
+        } catch (Exception ex) {
+            System.err.println("Failed to send email to " + toEmail);
+            ex.printStackTrace();
+        }
+    }
+
 }
