@@ -11,6 +11,8 @@ import com.restro.mapper.CouponMapper;
 import com.restro.repository.CartRepository;
 import com.restro.repository.CouponRepository;
 import com.restro.service.CouponService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -19,6 +21,9 @@ import java.util.List;
 
 @Service
 public class CouponServiceImpl implements CouponService {
+
+    private static final Logger logger =
+            LogManager.getLogger(CouponServiceImpl.class);
 
     private final CouponRepository couponRepository;
     private final CartRepository cartRepository;
@@ -33,62 +38,98 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public CouponResponse createCoupon(CreateCouponRequest request) {
 
+        logger.info("Create coupon request received for code: {}", request.getCode());
+
         Coupon coupon = new Coupon();
         coupon.setCode(request.getCode());
         coupon.setDescription(request.getDescription());
 
-        coupon.setDiscountType(DiscountType.valueOf(request.getDiscountType()));
+        coupon.setDiscountType(
+                DiscountType.valueOf(request.getDiscountType())
+        );
 
         coupon.setDiscountValue(request.getDiscountValue());
         coupon.setMinimumOrderAmount(request.getMinimumOrderAmount());
-
         coupon.setMaximumDiscount(request.getMaximumDiscount());
-
         coupon.setValidFrom(request.getValidFrom());
         coupon.setValidUntil(request.getValidUntil());
-
         coupon.setActive(request.getActive());
+
         coupon = couponRepository.save(coupon);
+
+        logger.info("Coupon created successfully: {}", coupon.getCode());
+
         return couponMapper.toCouponResponse(coupon);
     }
 
     @Override
     public List<CouponResponse> getAllCoupons() {
-        return couponRepository.findByActiveTrue()
+
+        logger.info("Fetching all active coupons");
+
+        List<CouponResponse> coupons = couponRepository.findByActiveTrue()
                 .stream()
                 .map(couponMapper::toCouponResponse)
                 .toList();
+
+        logger.info("Total active coupons found: {}", coupons.size());
+
+        return coupons;
     }
 
     @Override
     public ApplyCouponResponse applyCoupon(ApplyCouponRequest request) {
 
+        logger.info("Apply coupon request received for cartId: {}, couponCode: {}",
+                request.getCartId(),
+                request.getCouponCode());
+
         Cart cart = cartRepository.findById(request.getCartId())
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
+                .orElseThrow(() -> {
+                    logger.error("Cart not found for ID: {}", request.getCartId());
+                    return new RuntimeException("Cart not found");
+                });
 
         Coupon coupon = couponRepository.findByCode(request.getCouponCode())
-                .orElseThrow(() -> new RuntimeException("Coupon not found"));
+                .orElseThrow(() -> {
+                    logger.error("Coupon not found: {}", request.getCouponCode());
+                    return new RuntimeException("Coupon not found");
+                });
 
-        // 1. Check active
+        // Check active
         if (Boolean.FALSE.equals(coupon.getActive())) {
+            logger.warn("Coupon is inactive: {}", coupon.getCode());
             throw new RuntimeException("Coupon inactive");
         }
-        // 2. Check validity window
+
+        // Check validity
         LocalDateTime now = LocalDateTime.now();
 
-        if (coupon.getValidFrom() != null && now.isBefore(coupon.getValidFrom())) {
+        if (coupon.getValidFrom() != null &&
+                now.isBefore(coupon.getValidFrom())) {
+
+            logger.warn("Coupon not yet active: {}", coupon.getCode());
             throw new RuntimeException("Coupon not yet active");
         }
 
-        if (coupon.getValidUntil() != null && now.isAfter(coupon.getValidUntil())) {
+        if (coupon.getValidUntil() != null &&
+                now.isAfter(coupon.getValidUntil())) {
+
+            logger.warn("Coupon expired: {}", coupon.getCode());
             throw new RuntimeException("Coupon expired");
         }
-        // 3. Minimum order check
-        if (cart.getSubTotal().compareTo(coupon.getMinimumOrderAmount()) < 0) {
+
+        // Minimum order check
+        if (cart.getSubTotal().compareTo(
+                coupon.getMinimumOrderAmount()) < 0) {
+
+            logger.warn("Minimum order amount not reached for coupon: {}",
+                    coupon.getCode());
+
             throw new RuntimeException("Minimum order amount not reached");
         }
 
-        // 4. Calculate discount properly
+        // Calculate discount
         BigDecimal discount = BigDecimal.ZERO;
 
         if (coupon.getDiscountType() == DiscountType.PERCENTAGE) {
@@ -98,16 +139,18 @@ public class CouponServiceImpl implements CouponService {
                     .divide(BigDecimal.valueOf(100));
 
         } else if (coupon.getDiscountType() == DiscountType.FIXED) {
+
             discount = coupon.getDiscountValue();
         }
 
-        // 5. Apply max discount cap
+        // Maximum discount cap
         if (coupon.getMaximumDiscount() != null &&
                 discount.compareTo(coupon.getMaximumDiscount()) > 0) {
+
             discount = coupon.getMaximumDiscount();
         }
 
-        // 6. Update cart
+        // Update cart
         cart.setDiscountAmount(discount);
 
         cart.setGrandTotal(
@@ -119,7 +162,10 @@ public class CouponServiceImpl implements CouponService {
 
         cartRepository.save(cart);
 
-        // 7. Response
+        logger.info("Coupon applied successfully. Discount: {}, Grand Total: {}",
+                discount,
+                cart.getGrandTotal());
+
         return new ApplyCouponResponse(
                 "Coupon applied successfully",
                 discount,
@@ -127,13 +173,19 @@ public class CouponServiceImpl implements CouponService {
         );
     }
 
-
     @Override
     public ApplyCouponResponse removeCoupon(Long cartId) {
+
+        logger.info("Remove coupon request received for cartId: {}", cartId);
+
         Cart cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
+                .orElseThrow(() -> {
+                    logger.error("Cart not found for ID: {}", cartId);
+                    return new RuntimeException("Cart not found");
+                });
 
         cart.setDiscountAmount(BigDecimal.ZERO);
+
         cart.setGrandTotal(
                 cart.getSubTotal()
                         .add(cart.getDeliveryFee())
@@ -141,6 +193,8 @@ public class CouponServiceImpl implements CouponService {
         );
 
         cartRepository.save(cart);
+
+        logger.info("Coupon removed successfully for cartId: {}", cartId);
 
         return new ApplyCouponResponse(
                 "Coupon removed successfully",
@@ -151,19 +205,35 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     public CouponResponse getCouponByCode(String code) {
+
+        logger.info("Fetching coupon by code: {}", code);
+
         Coupon coupon = couponRepository.findByCode(code)
-                .orElseThrow(() -> new RuntimeException("Coupon not found"));
+                .orElseThrow(() -> {
+                    logger.error("Coupon not found: {}", code);
+                    return new RuntimeException("Coupon not found");
+                });
+
+        logger.info("Coupon found successfully: {}", code);
 
         return couponMapper.toCouponResponse(coupon);
     }
 
     @Override
     public String disableCoupon(Long couponId) {
+
+        logger.info("Disable coupon request received for couponId: {}", couponId);
+
         Coupon coupon = couponRepository.findById(couponId)
-                .orElseThrow(() -> new RuntimeException("Coupon not found"));
+                .orElseThrow(() -> {
+                    logger.error("Coupon not found for ID: {}", couponId);
+                    return new RuntimeException("Coupon not found");
+                });
 
         coupon.setActive(false);
         couponRepository.save(coupon);
+
+        logger.info("Coupon disabled successfully: {}", coupon.getCode());
 
         return "Coupon disabled successfully";
     }

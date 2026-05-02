@@ -29,7 +29,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(auth -> auth
 
 						// Public APIs
-						.requestMatchers("/auth/**").permitAll()
+						.requestMatchers("/auth/**", "/api/menu/**").permitAll()
 
 						// Swagger
 						.requestMatchers(
