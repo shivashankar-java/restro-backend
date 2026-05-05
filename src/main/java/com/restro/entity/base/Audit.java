@@ -2,6 +2,7 @@ package com.restro.entity.base;
 
 import java.time.LocalDateTime;
 
+import com.restro.config.SecurityUtils;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
@@ -20,21 +21,17 @@ public abstract class Audit {
 
     private String updatedBy;
 
-    @PrePersist
-    public void onCreate() {
-        this.createdAt = LocalDateTime.now();
+	@PrePersist
+	public void onCreate() {
+		this.createdAt = LocalDateTime.now();
+		this.createdBy = SecurityUtils.getCurrentUser();
+	}
 
-        // TEMP: set static user (replace later with logged-in user)
-        this.createdBy = "SYSTEM";
-    }
-
-    @PreUpdate
-    public void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
-
-        // TEMP: set static user (replace later with logged-in user)
-        this.updatedBy = "SYSTEM";
-    }
+	@PreUpdate
+	public void onUpdate() {
+		this.updatedAt = LocalDateTime.now();
+		this.updatedBy = SecurityUtils.getCurrentUser();
+	}
 
 	public LocalDateTime getCreatedAt() {
 		return createdAt;

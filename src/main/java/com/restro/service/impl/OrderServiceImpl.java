@@ -48,43 +48,49 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponse placeOrder(PlaceOrderRequest request) {
 
-
-    Cart cart = cartRepository.findById(request.getCartId())
-            .orElseThrow(() -> new RuntimeException("Cart not found"));
+        Cart cart = cartRepository.findById(request.getCartId())
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
 
         if (cart.getCartItems() == null || cart.getCartItems().isEmpty()) {
-        throw new RuntimeException("Cart is empty");
-    }
+            throw new RuntimeException("Cart is empty");
+        }
 
-    Order order = new Order();
+        User user = getLoggedInUser(); //  IMPORTANT
+
+        Order order = new Order();
         order.setOrderNumber("ORD-" + UUID.randomUUID().toString().substring(0, 8));
+
+        order.setUser(user); //  FIX HERE
+
         order.setRestaurant(cart.getRestaurant());
         order.setOrderItems(new ArrayList<>());
+
         order.setSubTotal(cart.getSubTotal());
         order.setDeliveryFee(cart.getDeliveryFee());
         order.setTaxAmount(cart.getTaxAmount());
         order.setDiscountAmount(cart.getDiscountAmount());
         order.setGrandTotal(cart.getGrandTotal());
+
         order.setDeliveryAddress(cart.getDeliveryAddress());
         order.setStatus(OrderStatus.PENDING);
 
-    order = orderRepository.save(order);
+        order = orderRepository.save(order);
 
         for (CartItem cartItem : cart.getCartItems()) {
-        OrderItem item = new OrderItem();
-        item.setOrder(order);
-        item.setMenuItem(cartItem.getMenuItem());
-        item.setQuantity(cartItem.getQuantity());
-        item.setPricePerUnit(cartItem.getPricePerUnit());
-        item.setTotalPrice(cartItem.getTotalPrice());
-        item.setSpecialInstructions(cartItem.getSpecialInstructions());
+            OrderItem item = new OrderItem();
+            item.setOrder(order);
+            item.setMenuItem(cartItem.getMenuItem());
+            item.setQuantity(cartItem.getQuantity());
+            item.setPricePerUnit(cartItem.getPricePerUnit());
+            item.setTotalPrice(cartItem.getTotalPrice());
+            item.setSpecialInstructions(cartItem.getSpecialInstructions());
 
-        order.getOrderItems().add(item);
-    }
+            order.getOrderItems().add(item);
+        }
 
-    order = orderRepository.save(order);
+        order = orderRepository.save(order);
 
-    Payment payment = new Payment();
+        Payment payment = new Payment();
         payment.setOrder(order);
         payment.setAmount(order.getGrandTotal());
         payment.setPaymentMethod(PaymentMethod.valueOf(request.getPaymentMethod()));
@@ -98,7 +104,7 @@ public class OrderServiceImpl implements OrderService {
         cartRepository.save(cart);
 
         return orderMapper.toOrderResponse(order);
-     }
+    }
 
     @Override
     public OrderResponse getOrderById(Long orderId) {

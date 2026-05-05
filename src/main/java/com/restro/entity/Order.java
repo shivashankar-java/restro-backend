@@ -34,6 +34,9 @@ public class Order extends Audit {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
+    @OneToOne(mappedBy = "order")
+    private Payment payment;
+
     private BigDecimal subTotal;
     private BigDecimal deliveryFee;
     private BigDecimal taxAmount;
@@ -83,6 +86,14 @@ public class Order extends Audit {
 
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public void setPayment(Payment payment) {
+        this.payment = payment;
     }
 
     public BigDecimal getSubTotal() {
