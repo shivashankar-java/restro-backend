@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import com.restro.entity.Category;
+import com.restro.entity.FoodCategory;
+import com.restro.repository.FoodCategoryRepository;
 import org.springframework.stereotype.Service;
 
 import com.restro.dto.request.MenuRequest;
@@ -18,17 +20,32 @@ public class MenuServiceImpl implements MenuService {
 
     private final MenuItemRepository menuRepository;
     private final MenuMapper menuMapper;
+    private final FoodCategoryRepository foodCategoryRepository;
 
-    public MenuServiceImpl(MenuItemRepository menuRepository, MenuMapper menuMapper) {
+    public MenuServiceImpl(MenuItemRepository menuRepository, MenuMapper menuMapper, FoodCategoryRepository foodCategoryRepository) {
 		super();
 		this.menuRepository = menuRepository;
 		this.menuMapper = menuMapper;
-	}
+        this.foodCategoryRepository = foodCategoryRepository;
+    }
 
-	//  Add Menu
     @Override
-    public MenuResponse addMenu(MenuRequest request) {
-        MenuItem item = menuMapper.toEntity(request);
+    public MenuResponse updateMenu(UUID id, MenuRequest request) {
+
+        MenuItem item = menuRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+
+        FoodCategory category = foodCategoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        item.setName(request.getName());
+        item.setDescription(request.getDescription());
+        item.setPrice(request.getPrice());
+        item.setAvailable(request.getAvailable());
+        item.setRating(request.getRating());
+
+        item.setCategory(category);
+
         return menuMapper.toResponse(menuRepository.save(item));
     }
 
@@ -40,16 +57,17 @@ public class MenuServiceImpl implements MenuService {
 
     //  Update Menu
     @Override
-    public MenuResponse updateMenu(UUID id, MenuRequest request) {
+    public MenuResponse addMenu(MenuRequest request) {
 
-        MenuItem item = menuRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item not found"));
+        FoodCategory category = foodCategoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
 
-        item.setName(request.getName());
-        item.setPrice(request.getPrice());
-        item.setCategory(request.getCategory());
+        MenuItem item = menuMapper.toEntity(request);
 
-        return menuMapper.toResponse(menuRepository.save(item));
+        item.setCategory(category);
+
+        return menuMapper.toResponse(
+                menuRepository.save(item));
     }
 
     //  Delete Menu
@@ -59,9 +77,9 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public List<MenuResponse> getMenuByCategory(Category category) {
+    public List<MenuResponse> getMenuByCategory(String categoryName) {
 
-        List<MenuItem> items = menuRepository.findByCategory(category);
+        List<MenuItem> items = menuRepository.findByCategory_CategoryName(categoryName);
 
         return menuMapper.toResponseList(items);
     }

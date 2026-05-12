@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,7 +19,11 @@ public class FoodCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "category_id", updatable = false, nullable = false)
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(name = "category_id",
+            columnDefinition = "CHAR(36)",
+            updatable = false,
+            nullable = false)
     private UUID categoryId;
 
     @Column(name = "category_name")
@@ -28,6 +34,10 @@ public class FoodCategory {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Restaurant> restaurants;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private List<MenuItem> menuItems;
 
     public UUID getCategoryId() {
         return categoryId;
@@ -61,13 +71,11 @@ public class FoodCategory {
         this.restaurants = restaurants;
     }
 
-    @Override
-    public String toString() {
-        return "FoodCategory{" +
-                "categoryId=" + categoryId +
-                ", categoryName='" + categoryName + '\'' +
-                ", categoryImageUrl='" + categoryImageUrl + '\'' +
-                ", restaurants=" + restaurants +
-                '}';
+    public List<MenuItem> getMenuItems() {
+        return menuItems;
+    }
+
+    public void setMenuItems(List<MenuItem> menuItems) {
+        this.menuItems = menuItems;
     }
 }

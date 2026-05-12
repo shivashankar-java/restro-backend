@@ -1,10 +1,14 @@
 package com.restro.service.impl;
 
+import com.restro.dto.request.MenuRequest;
+import com.restro.dto.request.MenuRequest1;
 import com.restro.dto.request.RestaurantRequest;
 import com.restro.dto.response.RestaurantResponse;
+import com.restro.entity.FoodCategory;
 import com.restro.entity.MenuItem;
 import com.restro.entity.Restaurant;
 import com.restro.mapper.RestaurantMapper;
+import com.restro.repository.FoodCategoryRepository;
 import com.restro.repository.MenuItemRepository;
 import com.restro.repository.RestaurantRepository;
 import com.restro.service.RestaurantService;
@@ -19,29 +23,48 @@ public class RestaurantServiceImpl implements RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final MenuItemRepository menuRepository;
     private final RestaurantMapper restaurantMapper;
+    private final FoodCategoryRepository foodCategoryRepository;
 
     public RestaurantServiceImpl(
             RestaurantRepository restaurantRepository,
             MenuItemRepository menuRepository,
-            RestaurantMapper restaurantMapper) {
+            RestaurantMapper restaurantMapper, FoodCategoryRepository foodCategoryRepository) {
         this.restaurantRepository = restaurantRepository;
         this.menuRepository = menuRepository;
         this.restaurantMapper = restaurantMapper;
+        this.foodCategoryRepository = foodCategoryRepository;
     }
 
-    // ADMIN → Add Restaurant
+//    @Override
+//    public RestaurantResponse addRestaurant(RestaurantRequest request) {
+//
+//        Restaurant restaurant = restaurantMapper.toEntity(request);
+//
+//        // Category
+//        FoodCategory category =
+//                foodCategoryRepository.findById(request.getCategoryId())
+//                        .orElseThrow(() -> new RuntimeException("Category not found"));
+//
+//        List<UUID> menuIds =
+//                request.getMenus()
+//                        .stream()
+//                        .map(MenuRequest::getMenuId)
+//                        .toList();
+//
+//        List<MenuItem> menuItems =
+//                menuRepository.findAllById(menuIds);
+//
+//        restaurant.setCategory(category);
+//        restaurant.setMenuItems(menuItems);
+//
+//        Restaurant saved = restaurantRepository.save(restaurant);
+//
+//        return restaurantMapper.toResponse(saved);
+//    }
+
     @Override
     public RestaurantResponse addRestaurant(RestaurantRequest request) {
-
-        Restaurant restaurant = restaurantMapper.toEntity(request);
-
-        List<MenuItem> menuItems = menuRepository.findAllById(request.getMenuIds());
-
-        restaurant.setMenuItems(menuItems);
-
-        Restaurant saved = restaurantRepository.save(restaurant);
-
-        return restaurantMapper.toResponse(saved);
+        return null;
     }
 
     // CUSTOMER → Get Restaurants by Menu Item

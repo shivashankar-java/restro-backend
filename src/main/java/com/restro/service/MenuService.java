@@ -17,5 +17,6 @@ public interface MenuService {
 
     void deleteMenu(UUID id);
 
-    List<MenuResponse> getMenuByCategory(Category category);
+    List<MenuResponse> getMenuByCategory(String categoryName);
+
 }

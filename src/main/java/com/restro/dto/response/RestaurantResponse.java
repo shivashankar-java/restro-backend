@@ -8,24 +8,23 @@ import java.util.UUID;
 @Data
 public class RestaurantResponse {
 
-    private UUID id;
-
+    private UUID restaurantId;
     private String name;
+    private String location;
+    private Double rating;
+    private String deliveryTime;
+    private String image;
 
-    private String address;
-
-    private String phone;
-
-    private String email;
+    private Double price;
 
     private List<String> menuNames;
 
-    public UUID getId() {
-        return id;
+    public UUID getRestaurantId() {
+        return restaurantId;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setRestaurantId(UUID restaurantId) {
+        this.restaurantId = restaurantId;
     }
 
     public String getName() {
@@ -36,28 +35,44 @@ public class RestaurantResponse {
         this.name = name;
     }
 
-    public String getAddress() {
-        return address;
+    public String getLocation() {
+        return location;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
-    public String getPhone() {
-        return phone;
+    public Double getRating() {
+        return rating;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setRating(Double rating) {
+        this.rating = rating;
     }
 
-    public String getEmail() {
-        return email;
+    public String getDeliveryTime() {
+        return deliveryTime;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setDeliveryTime(String deliveryTime) {
+        this.deliveryTime = deliveryTime;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     public List<String> getMenuNames() {
@@ -67,4 +82,6 @@ public class RestaurantResponse {
     public void setMenuNames(List<String> menuNames) {
         this.menuNames = menuNames;
     }
+
+
 }

@@ -12,7 +12,7 @@ public class MenuResponse {
 	private String name;
 	private String description;
 	private Double price;
-	private Category category;
+	private String category;
 	private Boolean available;
 	private Double rating;
 
@@ -48,11 +48,11 @@ public class MenuResponse {
 		this.price = price;
 	}
 
-	public Category getCategory() {
+	public String getCategory() {
 		return category;
 	}
 
-	public void setCategory(Category category) {
+	public void setCategory(String category) {
 		this.category = category;
 	}
 
@@ -70,18 +70,5 @@ public class MenuResponse {
 
 	public void setRating(Double rating) {
 		this.rating = rating;
-	}
-
-	@Override
-	public String toString() {
-		return "MenuResponse{" +
-				"id=" + id +
-				", name='" + name + '\'' +
-				", description='" + description + '\'' +
-				", price=" + price +
-				", category=" + category +
-				", available=" + available +
-				", rating=" + rating +
-				'}';
 	}
 }

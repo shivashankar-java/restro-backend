@@ -24,8 +24,9 @@ public class MenuItem extends Audit {
 	private String description;
     private Double price;
 
-	@Enumerated(EnumType.STRING)
-	private Category category;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "category_id")
+	private FoodCategory category;
 
 	private Boolean available;
 	private Double rating;
@@ -65,11 +66,11 @@ public class MenuItem extends Audit {
 		this.price = price;
 	}
 
-	public Category getCategory() {
+	public FoodCategory getCategory() {
 		return category;
 	}
 
-	public void setCategory(Category category) {
+	public void setCategory(FoodCategory category) {
 		this.category = category;
 	}
 

@@ -13,8 +13,10 @@ public class RestaurantRequest {
     private String phone;
     private String email;
 
-    // menu IDs assigned to restaurant
-    private List<UUID> menuIds;
+    private UUID categoryId;
+
+    // Multiple menus
+    private List<MenuRequest> menus;
 
     public String getName() {
         return name;
@@ -48,11 +50,19 @@ public class RestaurantRequest {
         this.email = email;
     }
 
-    public List<UUID> getMenuIds() {
-        return menuIds;
+    public List<MenuRequest> getMenus() {
+        return menus;
     }
 
-    public void setMenuIds(List<UUID> menuIds) {
-        this.menuIds = menuIds;
+    public void setMenus(List<MenuRequest> menus) {
+        this.menus = menus;
+    }
+
+    public UUID getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(UUID categoryId) {
+        this.categoryId = categoryId;
     }
 }

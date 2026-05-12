@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.restro.entity.Category;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,31 +23,30 @@ public class MenuController {
         this.menuService = menuService;
     }
 
-    //  Add Menu (ADMIN only)
+    // Add Menu
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
     @PostMapping
     public ResponseEntity<MenuResponse> addMenu(@RequestBody MenuRequest request) {
         MenuResponse response = menuService.addMenu(request);
-        return ResponseEntity.ok(response);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    //  Get All Menu (Public / All users)
+    // Get All Menu
     @GetMapping
     public ResponseEntity<List<MenuResponse>> getAllMenu() {
+
         return ResponseEntity.ok(menuService.getAllMenu());
     }
 
-    //  Update Menu (ADMIN only)
+    // Update Menu
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
     @PutMapping("/{id}")
-    public ResponseEntity<MenuResponse> updateMenu(
-            @PathVariable UUID id,
-            @RequestBody MenuRequest request) {
-
+    public ResponseEntity<MenuResponse> updateMenu(@PathVariable UUID id,
+                                                   @RequestBody MenuRequest request) {
         return ResponseEntity.ok(menuService.updateMenu(id, request));
     }
 
-    //  Delete Menu (ADMIN only)
+    // Delete Menu
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteMenu(@PathVariable UUID id) {
@@ -55,11 +55,13 @@ public class MenuController {
         return ResponseEntity.ok("Menu item deleted successfully");
     }
 
+    // Get Menu By Category Name
     @GetMapping("/category")
-    public ResponseEntity<List<MenuResponse>> getMenuByCategory(
-            @RequestParam Category category) {
+    public ResponseEntity<List<MenuResponse>> getMenuByCategory(@RequestParam String categoryName) {
 
-        return ResponseEntity.ok(menuService.getMenuByCategory(category));
+        return ResponseEntity.ok(menuService.getMenuByCategory(categoryName));
     }
-    
+
 }
+    
+

@@ -2,12 +2,14 @@ package com.restro.dto.request;
 
 import com.restro.entity.Category;
 
+import java.util.UUID;
+
 public class MenuRequest {
 
     private String name;
     private String description;
     private Double price;
-    private Category category;
+    private UUID categoryId;
     private Boolean available;
     private Double rating;
 
@@ -35,12 +37,12 @@ public class MenuRequest {
         this.price = price;
     }
 
-    public Category getCategory() {
-        return category;
+    public UUID getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategoryId(UUID categoryId) {
+        this.categoryId = categoryId;
     }
 
     public Boolean getAvailable() {

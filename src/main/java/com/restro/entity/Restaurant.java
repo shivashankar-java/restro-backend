@@ -24,24 +24,21 @@ public class Restaurant extends Audit{
     private String phone;
     private String email;
     private String password;
-
     private String location;
     private Double rating;
     private String deliveryTime;
     private String image;
+    private Double price;
 
     @ManyToMany
-    @JoinTable(
-            name = "restaurant_menu",
+    @JoinTable(name = "restaurant_menu",
             joinColumns = @JoinColumn(name = "restaurant_id"),
             inverseJoinColumns = @JoinColumn(name = "menu_id"))
     private List<MenuItem> menuItems;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private FoodCategory category;
-
 
     public UUID getId() {
         return id;
@@ -139,6 +136,13 @@ public class Restaurant extends Audit{
         this.menuItems = menuItems;
     }
 
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
 
     @Override
     public String toString() {
@@ -153,8 +157,9 @@ public class Restaurant extends Audit{
                 ", rating=" + rating +
                 ", deliveryTime='" + deliveryTime + '\'' +
                 ", image='" + image + '\'' +
-                ", category=" + category +
+                ", price=" + price +
                 ", menuItems=" + menuItems +
+                ", category=" + category +
                 '}';
     }
 }
