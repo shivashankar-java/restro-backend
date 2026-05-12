@@ -9,8 +9,9 @@ import com.restro.entity.MenuItem;
 import java.awt.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface CartItemRepository extends JpaRepository<CartItem, Long> {
+public interface CartItemRepository extends JpaRepository<CartItem, UUID> {
 
     List<CartItem> findByCart(Cart cart);
 

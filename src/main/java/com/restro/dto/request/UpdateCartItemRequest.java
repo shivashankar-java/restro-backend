@@ -3,18 +3,20 @@ package com.restro.dto.request;
 
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class UpdateCartItemRequest {
 
-    private Long cartItemId;
+    private UUID cartItemId;
     private Integer quantity;
 
 
-    public Long getCartItemId() {
+    public UUID getCartItemId() {
         return cartItemId;
     }
 
-    public void setCartItemId(Long cartItemId) {
+    public void setCartItemId(UUID cartItemId) {
         this.cartItemId = cartItemId;
     }
 

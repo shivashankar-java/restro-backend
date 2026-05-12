@@ -3,9 +3,12 @@ package com.restro.entity;
 import com.restro.entity.base.Audit;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "offers")
@@ -17,8 +20,10 @@ import java.time.LocalDateTime;
 public class Offer extends Audit {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(columnDefinition = "CHAR(36)")
+    private UUID id;
 
     private String title;
     private String description;
@@ -33,11 +38,11 @@ public class Offer extends Audit {
 
     private Boolean active;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

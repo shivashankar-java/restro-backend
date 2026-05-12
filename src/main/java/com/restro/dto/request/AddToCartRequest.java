@@ -2,29 +2,30 @@ package com.restro.dto.request;
 
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class AddToCartRequest {
 
-    private Long restaurantId;
-    private Long menuId;
+    private UUID restaurantId;
+    private UUID menuId;
     private Integer quantity;
     private String deliveryAddress;
     private String specialInstructions;
 
-
-    public Long getRestaurantId() {
+    public UUID getRestaurantId() {
         return restaurantId;
     }
 
-    public void setRestaurantId(Long restaurantId) {
+    public void setRestaurantId(UUID restaurantId) {
         this.restaurantId = restaurantId;
     }
 
-    public Long getMenuId() {
+    public UUID getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(Long menuId) {
+    public void setMenuId(UUID menuId) {
         this.menuId = menuId;
     }
 

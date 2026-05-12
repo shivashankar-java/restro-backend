@@ -4,10 +4,11 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class CartResponse {
-    private Long cartId;
+    private UUID cartId;
     private String restaurantName;
     private List<CartItemResponse> items;
     private BigDecimal subTotal;
@@ -19,11 +20,11 @@ public class CartResponse {
     private String appliedCouponCode;
     private String status;
 
-    public Long getCartId() {
+    public UUID getCartId() {
         return cartId;
     }
 
-    public void setCartId(Long cartId) {
+    public void setCartId(UUID cartId) {
         this.cartId = cartId;
     }
 

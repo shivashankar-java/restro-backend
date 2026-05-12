@@ -107,7 +107,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderResponse getOrderById(Long orderId) {
+    public OrderResponse getOrderById(UUID orderId) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -129,7 +129,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public String cancelOrder(Long orderId) {
+    public String cancelOrder(UUID orderId) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -148,7 +148,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public String trackOrderStatus(Long orderId) {
+    public String trackOrderStatus(UUID orderId) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
@@ -157,7 +157,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public String updateOrderStatus(Long orderId, String status) {
+    public String updateOrderStatus(UUID orderId, String status) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));

@@ -6,6 +6,7 @@ import com.restro.dto.response.ApplyCouponResponse;
 import com.restro.dto.response.CouponResponse;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface CouponService {
 
@@ -15,9 +16,9 @@ public interface CouponService {
 
     ApplyCouponResponse applyCoupon(ApplyCouponRequest request);
 
-    ApplyCouponResponse removeCoupon(Long cartId);
+    ApplyCouponResponse removeCoupon(UUID cartId);
 
     CouponResponse getCouponByCode(String code);
 
-    String disableCoupon(Long couponId);
+    String disableCoupon(UUID couponId);
 }

@@ -11,6 +11,7 @@ import com.restro.service.RestaurantService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class RestaurantServiceImpl implements RestaurantService {
@@ -45,7 +46,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     // CUSTOMER → Get Restaurants by Menu Item
     @Override
-    public List<RestaurantResponse> getRestaurantsByMenu(Long menuId) {
+    public List<RestaurantResponse> getRestaurantsByMenu(UUID menuId) {
 
         MenuItem menuItem = menuRepository.findById(menuId)
                 .orElseThrow(() -> new RuntimeException("Menu item not found"));

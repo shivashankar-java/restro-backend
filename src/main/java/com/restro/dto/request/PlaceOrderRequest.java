@@ -1,15 +1,17 @@
 package com.restro.dto.request;
 
+import java.util.UUID;
+
 public class PlaceOrderRequest {
 
-    private Long cartId;
+    private UUID cartId;
     private String paymentMethod; // COD / UPI / CARD
 
-    public Long getCartId() {
+    public UUID getCartId() {
         return cartId;
     }
 
-    public void setCartId(Long cartId) {
+    public void setCartId(UUID cartId) {
         this.cartId = cartId;
     }
 

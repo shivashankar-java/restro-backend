@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CouponServiceImpl implements CouponService {
@@ -174,7 +175,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
-    public ApplyCouponResponse removeCoupon(Long cartId) {
+    public ApplyCouponResponse removeCoupon(UUID cartId) {
 
         logger.info("Remove coupon request received for cartId: {}", cartId);
 
@@ -220,7 +221,7 @@ public class CouponServiceImpl implements CouponService {
     }
 
     @Override
-    public String disableCoupon(Long couponId) {
+    public String disableCoupon(UUID couponId) {
 
         logger.info("Disable coupon request received for couponId: {}", couponId);
 

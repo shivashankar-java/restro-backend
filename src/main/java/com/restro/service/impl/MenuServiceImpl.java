@@ -1,6 +1,7 @@
 package com.restro.service.impl;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.restro.entity.Category;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class MenuServiceImpl implements MenuService {
 
     //  Update Menu
     @Override
-    public MenuResponse updateMenu(Long id, MenuRequest request) {
+    public MenuResponse updateMenu(UUID id, MenuRequest request) {
 
         MenuItem item = menuRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item not found"));
@@ -53,7 +54,7 @@ public class MenuServiceImpl implements MenuService {
 
     //  Delete Menu
     @Override
-    public void deleteMenu(Long id) {
+    public void deleteMenu(UUID id) {
     	menuRepository.deleteById(id);
     }
 

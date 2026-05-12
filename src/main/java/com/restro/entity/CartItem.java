@@ -4,11 +4,12 @@ import com.restro.entity.base.Audit;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Entity
 @Table(name = "cart_items")
@@ -18,8 +19,10 @@ import java.math.BigDecimal;
 public class CartItem extends Audit {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(columnDefinition = "CHAR(36)")
+    private UUID id;
 
     @ManyToOne
     @JoinColumn(name = "cart_id")
@@ -39,72 +42,67 @@ public class CartItem extends Audit {
 
     private String customization;
 
-    // ===== GETTERS =====
-
-    public Long getId() {
+    public UUID getId() {
         return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public Cart getCart() {
         return cart;
     }
 
-    public MenuItem getMenuItem() {
-        return menuItem;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public BigDecimal getPricePerUnit() {
-        return pricePerUnit;
-    }
-
-    public BigDecimal getTotalPrice() {
-        return totalPrice;
-    }
-
-    public String getSpecialInstructions() {
-        return specialInstructions;
-    }
-
-    public String getCustomization() {
-        return customization;
-    }
-
-    // ===== SETTERS =====
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public void setCart(Cart cart) {
         this.cart = cart;
+    }
+
+    public MenuItem getMenuItem() {
+        return menuItem;
     }
 
     public void setMenuItem(MenuItem menuItem) {
         this.menuItem = menuItem;
     }
 
+    public Integer getQuantity() {
+        return quantity;
+    }
+
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public BigDecimal getPricePerUnit() {
+        return pricePerUnit;
     }
 
     public void setPricePerUnit(BigDecimal pricePerUnit) {
         this.pricePerUnit = pricePerUnit;
     }
 
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public String getSpecialInstructions() {
+        return specialInstructions;
     }
 
     public void setSpecialInstructions(String specialInstructions) {
         this.specialInstructions = specialInstructions;
     }
 
+    public String getCustomization() {
+        return customization;
+    }
+
     public void setCustomization(String customization) {
         this.customization = customization;
     }
-
 }

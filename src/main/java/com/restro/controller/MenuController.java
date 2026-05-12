@@ -1,6 +1,7 @@
 package com.restro.controller;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.restro.entity.Category;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class MenuController {
     }
 
     //  Add Menu (ADMIN only)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
     @PostMapping
     public ResponseEntity<MenuResponse> addMenu(@RequestBody MenuRequest request) {
         MenuResponse response = menuService.addMenu(request);
@@ -36,19 +37,19 @@ public class MenuController {
     }
 
     //  Update Menu (ADMIN only)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
     @PutMapping("/{id}")
     public ResponseEntity<MenuResponse> updateMenu(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @RequestBody MenuRequest request) {
 
         return ResponseEntity.ok(menuService.updateMenu(id, request));
     }
 
     //  Delete Menu (ADMIN only)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteMenu(@PathVariable Long id) {
+    public ResponseEntity<String> deleteMenu(@PathVariable UUID id) {
 
         menuService.deleteMenu(id);
         return ResponseEntity.ok("Menu item deleted successfully");

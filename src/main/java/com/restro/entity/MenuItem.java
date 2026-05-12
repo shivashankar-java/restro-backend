@@ -3,17 +3,23 @@ package com.restro.entity;
 import com.restro.entity.base.Audit;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "menu_items")
 @Data
 public class MenuItem extends Audit {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	@JdbcTypeCode(SqlTypes.CHAR)
+	@Column(columnDefinition = "CHAR(36)")
+	private UUID id;
+
     private String name;
 	private String description;
     private Double price;
@@ -27,11 +33,11 @@ public class MenuItem extends Audit {
 	@ManyToMany(mappedBy = "menuItems")
 	private List<Restaurant> restaurants;
 
-	public Long getId() {
+	public UUID getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 

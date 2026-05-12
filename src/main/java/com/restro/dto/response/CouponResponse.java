@@ -4,11 +4,12 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 public class CouponResponse {
 
-    private Long id;
+    private UUID id;
     private String code;
     private String discountType;
     private BigDecimal discountValue;
@@ -17,11 +18,11 @@ public class CouponResponse {
     private LocalDateTime expiryDate;
     private Boolean active;
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

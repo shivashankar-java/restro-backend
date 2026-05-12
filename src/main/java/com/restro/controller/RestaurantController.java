@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/restaurants")
@@ -33,7 +34,7 @@ public class RestaurantController {
     // CUSTOMER + ADMIN → Get restaurants by menu item
     @GetMapping("/by-menu/{menuId}")
     public ResponseEntity<List<RestaurantResponse>> getRestaurantsByMenu(
-            @PathVariable Long menuId) {
+            @PathVariable UUID menuId) {
 
         return ResponseEntity.ok(
                 restaurantService.getRestaurantsByMenu(menuId)

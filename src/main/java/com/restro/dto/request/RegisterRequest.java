@@ -1,5 +1,6 @@
 package com.restro.dto.request;
 
+import com.restro.entity.Address;
 import com.restro.entity.Gender;
 import com.restro.entity.Role;
 import jakarta.validation.constraints.Email;
@@ -32,12 +33,8 @@ public class RegisterRequest {
 	private String alternativeMobileNumber;
 
 	//  Embedded Address Fields
-	private String street;
-	private String houseNo;
-	private String city;
-	private String state;
-	private String country;
-	private String pincode;
+	private Address address;
+
 
 	public String getName() {
 		return name;
@@ -95,51 +92,11 @@ public class RegisterRequest {
 		this.alternativeMobileNumber = alternativeMobileNumber;
 	}
 
-	public String getStreet() {
-		return street;
+	public Address getAddress() {
+		return address;
 	}
 
-	public void setStreet(String street) {
-		this.street = street;
-	}
-
-	public String getHouseNo() {
-		return houseNo;
-	}
-
-	public void setHouseNo(String houseNo) {
-		this.houseNo = houseNo;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
-	public String getPincode() {
-		return pincode;
-	}
-
-	public void setPincode(String pincode) {
-		this.pincode = pincode;
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 }

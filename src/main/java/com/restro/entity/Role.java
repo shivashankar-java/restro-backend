@@ -4,5 +4,6 @@ public enum Role {
 
 	CUSTOMER,
     ADMIN,
-    STAFF
+    RESTAURANT_OWNER,
+    DELIVERY_PARTNER
 }

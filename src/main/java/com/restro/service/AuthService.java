@@ -16,4 +16,8 @@ public interface AuthService {
 
     ApiResponse resetPassword(ResetPasswordRequest request);
 
+    ApiResponse createRestaurantAdmin(RestaurantAdminRequest request);
+
+    ApiResponse createDeliveryPartner(DeliveryPartnerRequest request);
+
 }

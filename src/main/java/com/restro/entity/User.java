@@ -6,6 +6,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -15,8 +19,11 @@ import lombok.NoArgsConstructor;
 public class User extends Audit {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(columnDefinition = "CHAR(36)")
+    private UUID id;
+
     private String name;
 
     @Column(unique = true, nullable = false)
@@ -35,13 +42,18 @@ public class User extends Audit {
 	@Embedded
 	private Address address;
 
-	private boolean active = true;
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
 
-    public Long getId() {
+    @Column(nullable = false)
+    private Boolean active = true;
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -109,11 +121,36 @@ public class User extends Audit {
         this.address = address;
     }
 
-    public boolean isActive() {
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
+
+    public Boolean getActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                ", gender=" + gender +
+                ", mobileNumber='" + mobileNumber + '\'' +
+                ", alternativeMobileNumber='" + alternativeMobileNumber + '\'' +
+                ", address=" + address +
+                ", restaurant=" + restaurant +
+                ", active=" + active +
+                '}';
     }
 }

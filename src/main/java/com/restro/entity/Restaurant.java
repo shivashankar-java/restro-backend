@@ -3,36 +3,51 @@ package com.restro.entity;
 import com.restro.entity.base.Audit;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "restaurants")
 @Data
 public class Restaurant extends Audit{
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(columnDefinition = "CHAR(36)")
+    private UUID id;
 
     private String name;
     private String address;
     private String phone;
     private String email;
+    private String password;
+
+    private String location;
+    private Double rating;
+    private String deliveryTime;
+    private String image;
 
     @ManyToMany
     @JoinTable(
             name = "restaurant_menu",
             joinColumns = @JoinColumn(name = "restaurant_id"),
-            inverseJoinColumns = @JoinColumn(name = "menu_id")
-    )
+            inverseJoinColumns = @JoinColumn(name = "menu_id"))
     private List<MenuItem> menuItems;
 
-    public Long getId() {
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private FoodCategory category;
+
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -68,6 +83,54 @@ public class Restaurant extends Audit{
         this.email = email;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+
+    public String getDeliveryTime() {
+        return deliveryTime;
+    }
+
+    public void setDeliveryTime(String deliveryTime) {
+        this.deliveryTime = deliveryTime;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public FoodCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(FoodCategory category) {
+        this.category = category;
+    }
+
     public List<MenuItem> getMenuItems() {
         return menuItems;
     }
@@ -75,6 +138,7 @@ public class Restaurant extends Audit{
     public void setMenuItems(List<MenuItem> menuItems) {
         this.menuItems = menuItems;
     }
+
 
     @Override
     public String toString() {
@@ -84,6 +148,12 @@ public class Restaurant extends Audit{
                 ", address='" + address + '\'' +
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", location='" + location + '\'' +
+                ", rating=" + rating +
+                ", deliveryTime='" + deliveryTime + '\'' +
+                ", image='" + image + '\'' +
+                ", category=" + category +
                 ", menuItems=" + menuItems +
                 '}';
     }

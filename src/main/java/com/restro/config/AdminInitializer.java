@@ -30,7 +30,6 @@ public class AdminInitializer {
                 admin.setEmail("admin@gmail.com");
                 admin.setPassword(passwordEncoder.encode("admin123"));
                 admin.setRole(Role.ADMIN);
-                admin.setActive(true);
 
                 // optional: leave address null OR set default
                 admin.setAddress(null);

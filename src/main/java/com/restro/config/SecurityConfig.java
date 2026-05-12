@@ -28,41 +28,72 @@ public class SecurityConfig {
 
 				.authorizeHttpRequests(auth -> auth
 
-						// Public APIs
+						//  Public APIs
 						.requestMatchers("/auth/**", "/api/menu/**").permitAll()
 
-						// Swagger
+						//  Swagger
 						.requestMatchers(
 								"/swagger-ui/**",
 								"/v3/api-docs/**",
 								"/swagger-ui.html"
 						).permitAll()
 
-						// Admin only APIs
+						//  ADMIN only
 						.requestMatchers("/admin/**").hasRole("ADMIN")
 
-						// Customer + Admin APIs
-						.requestMatchers("/menu/**").hasAnyRole("ADMIN", "CUSTOMER")
+						//  CUSTOMER
 						.requestMatchers("/api/cart/**").hasRole("CUSTOMER")
 						.requestMatchers("/api/orders/**").hasRole("CUSTOMER")
 
-						// COUPONS
+						//  COUPONS
 						.requestMatchers(HttpMethod.POST, "/api/coupons/**").hasRole("ADMIN")
 						.requestMatchers(HttpMethod.PUT, "/api/coupons/**").hasRole("ADMIN")
 						.requestMatchers(HttpMethod.DELETE, "/api/coupons/**").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.GET, "/api/coupons/**").hasAnyRole("ADMIN", "CUSTOMER")
-
-						.requestMatchers(HttpMethod.POST, "/api/coupons/apply").hasRole("CUSTOMER")
-
-						// Restaurant APIs
-						// POST -> ADMIN only
-						.requestMatchers(HttpMethod.POST, "/api/restaurants", "/api/restaurants/**")
-						.hasRole("ADMIN")
-
-						.requestMatchers(HttpMethod.GET, "/api/restaurants", "/api/restaurants/**")
+						.requestMatchers(HttpMethod.GET, "/api/coupons/**")
 						.hasAnyRole("ADMIN", "CUSTOMER")
 
-						// Remaining secured
+						.requestMatchers(HttpMethod.POST, "/api/coupons/apply")
+						.hasRole("CUSTOMER")
+
+						//  RESTAURANTS
+						.requestMatchers(HttpMethod.POST, "/api/restaurants/**")
+						.hasRole("ADMIN")
+
+						.requestMatchers(HttpMethod.GET, "/api/restaurants/**")
+						.hasAnyRole("ADMIN", "CUSTOMER")
+
+						//  RESTAURANT OWNER APIs
+						.requestMatchers("/api/restaurant/**")
+						.hasRole("RESTAURANT_OWNER")
+
+						// Example:
+						// /api/restaurant/orders
+						// /api/restaurant/menu
+
+						// MENU MANAGEMENT
+
+						.requestMatchers(HttpMethod.POST, "/api/menu", "/api/menu/**")
+						.hasAnyRole("ADMIN", "RESTAURANT_OWNER")
+
+						.requestMatchers(HttpMethod.PUT, "/api/menu/**")
+						.hasAnyRole("ADMIN", "RESTAURANT_OWNER")
+
+						.requestMatchers(HttpMethod.DELETE, "/api/menu/**")
+						.hasAnyRole("ADMIN", "RESTAURANT_OWNER")
+
+						//  DELIVERY PARTNER APIs
+						.requestMatchers("/api/delivery/**")
+						.hasRole("DELIVERY_PARTNER")
+
+						// Example:
+						// /api/delivery/orders
+						// /api/delivery/accept
+
+						//  Shared access (optional)
+						.requestMatchers("/api/menu/manage/**")
+						.hasAnyRole("ADMIN", "RESTAURANT_OWNER")
+
+						//  All others
 						.anyRequest().authenticated()
 				);
 
@@ -73,4 +104,5 @@ public class SecurityConfig {
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
 }

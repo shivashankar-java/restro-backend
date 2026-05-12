@@ -1,11 +1,13 @@
 package com.restro.service.impl;
 
+import com.restro.config.SecurityUtils;
 import com.restro.dto.request.*;
 import com.restro.dto.response.ApiResponse;
-import com.restro.entity.OtpPurpose;
-import com.restro.entity.UserOtp;
+import com.restro.entity.*;
+import com.restro.repository.RestaurantRepository;
 import com.restro.repository.UserOtpRepository;
 import com.restro.service.EmailService;
+import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,8 +15,6 @@ import org.springframework.stereotype.Service;
 
 import com.restro.config.JwtUtil;
 import com.restro.dto.response.AuthResponse;
-import com.restro.entity.Role;
-import com.restro.entity.User;
 import com.restro.repository.UserRepository;
 import com.restro.service.AuthService;
 
@@ -31,13 +31,15 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
     private final UserOtpRepository userOtpRepository;
     private final EmailService emailService;
+    private final RestaurantRepository restaurantRepository;
 
-    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, UserOtpRepository userOtpRepository, EmailService emailService) {
+    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, UserOtpRepository userOtpRepository, EmailService emailService, RestaurantRepository restaurantRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.userOtpRepository = userOtpRepository;
         this.emailService = emailService;
+        this.restaurantRepository = restaurantRepository;
     }
 
     private String generateOtp() {
@@ -45,11 +47,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public ApiResponse register(RegisterRequest request) {
 
         logger.info("Register request received for user: {}", request.getName());
 
-        // 1. Validate email/mobile
         if ((request.getEmail() == null || request.getEmail().isBlank()) &&
                 (request.getMobileNumber() == null || request.getMobileNumber().isBlank())) {
 
@@ -57,24 +59,29 @@ public class AuthServiceImpl implements AuthService {
             return new ApiResponse(400, "Either email or mobile number is required");
         }
 
-        // 2. Check email exists
         if (request.getEmail() != null && !request.getEmail().isBlank()) {
+
             if (userRepository.existsByEmail(request.getEmail())) {
-                logger.warn("Registration failed: Email already exists -> {}", request.getEmail());
+                logger.warn("Registration failed: Email already exists -> {}",
+                        request.getEmail());
+
                 return new ApiResponse(409, "Email already exists");
             }
         }
 
-        // 3. Check mobile exists
-        if (request.getMobileNumber() != null && !request.getMobileNumber().isBlank()) {
+        if (request.getMobileNumber() != null &&
+                !request.getMobileNumber().isBlank()) {
+
             if (userRepository.existsByMobileNumber(request.getMobileNumber())) {
-                logger.warn("Registration failed: Mobile already exists -> {}", request.getMobileNumber());
+                logger.warn("Registration failed: Mobile already exists -> {}",
+                        request.getMobileNumber());
+
                 return new ApiResponse(409, "Mobile number already exists");
             }
         }
 
-        // 4. Create user
         User user = new User();
+
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setMobileNumber(request.getMobileNumber());
@@ -82,33 +89,38 @@ public class AuthServiceImpl implements AuthService {
         user.setRole(Role.CUSTOMER);
         user.setGender(request.getGender());
         user.setCreatedBy(request.getName());
+        user.setAlternativeMobileNumber(request.getAlternativeMobileNumber());
+        user.setAddress(request.getAddress());
+
         user.setActive(true);
+        User savedUser = userRepository.save(user);
+        userRepository.flush();
 
-        userRepository.save(user);
+        logger.info("User saved successfully with ID: {}",
+                savedUser.getId());
 
-        logger.info("User registered successfully: {}", request.getEmail());
+        // 6. Send email separately
+        if (savedUser.getEmail() != null && !savedUser.getEmail().isBlank()) {
 
-        // 5. Send simple welcome email (NO OTP)
-        if (user.getEmail() != null && !user.getEmail().isBlank()) {
+            try {
+                emailService.sendSimpleEmail(
+                        savedUser.getEmail(),
+                        "Welcome to RESTRO 🎉",
+                        "Hello " + savedUser.getName() + ",\n\n" +
+                                "Thank you for registering with RESTRO.\n" +
+                                "Your account has been created successfully.\n\n" +
+                                "Happy Ordering 🍕🍔🍟\n\n" +
+                                "Regards,\nRESTRO Team");
 
-            emailService.sendSimpleEmail(
-                    user.getEmail(),
-                    "Welcome to RESTRO 🎉",
-                    "Hello " + user.getName() + ",\n\n" +
-                            "Thank you for registering with RESTRO.\n" +
-                            "Your account has been created successfully.\n\n" +
-                            "We’re happy to have you with us!\n\n" +
-                            "Thank you once again for choosing RESTRO 🙌\n\n" +
-                            "Happy Ordering! 🍕🍔🍟\n\n" +
-                            "Enjoy ordering delicious food 🍽️\n\n" +
-                            "Regards,\nRESTRO Team"
-            );
+            } catch (Exception e) {
+                logger.error("Email sending failed: {}", e.getMessage());
+            }
         }
 
-        // 6. Response
+        // 7. Response
         return new ApiResponse(
                 200,
-                "Registration successful. Welcome email sent."
+                "Registration successful."
         );
     }
 
@@ -276,5 +288,77 @@ public class AuthServiceImpl implements AuthService {
         return new ApiResponse(200, "Password reset successfully");
     }
 
+    @Override
+    public ApiResponse createRestaurantAdmin(RestaurantAdminRequest request) {
+        String currentAdmin = SecurityUtils.getCurrentUser();
+
+        // Validate admin
+        if (currentAdmin == null) {
+            return new ApiResponse(401, "Unauthorized");
+        }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            return new ApiResponse(409, "Email already exists");
+        }
+
+        Restaurant restaurant = new Restaurant();
+
+        restaurant.setName(request.getRestaurantName());
+        restaurant.setAddress(request.getAddress());
+        restaurant.setPhone(request.getMobileNumber());
+        restaurant.setEmail(request.getEmail());
+
+        restaurant.setPassword(
+                passwordEncoder.encode(request.getPassword()));
+
+        restaurantRepository.save(restaurant);
+
+        User user = new User();
+
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setMobileNumber(request.getMobileNumber());
+
+        user.setPassword(
+                passwordEncoder.encode(request.getPassword())
+        );
+
+        user.setRole(Role.RESTAURANT_OWNER);
+        user.setRestaurant(restaurant);
+        user.setCreatedBy(currentAdmin);
+
+        userRepository.save(user);
+
+        return new ApiResponse(
+                200,
+                "Restaurant owner created successfully by " + currentAdmin
+        );
+    }
+
+    @Override
+    public ApiResponse createDeliveryPartner(DeliveryPartnerRequest request) {
+
+        String currentAdmin = SecurityUtils.getCurrentUser();
+
+        if (currentAdmin == null) {
+            return new ApiResponse(401, "Unauthorized");
+        }
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            return new ApiResponse(409, "Email already exists");
+        }
+
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setMobileNumber(request.getMobileNumber());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(Role.DELIVERY_PARTNER);
+        user.setCreatedBy(currentAdmin); //  REAL ADMIN
+
+        userRepository.save(user);
+
+        return new ApiResponse(200, "Delivery Partner created by " + currentAdmin);
+    }
 
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.UUID;
 
 @Service
 public class InvoiceServiceImpl implements InvoiceService {
@@ -25,7 +26,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     }
 
     @Override
-    public byte[] generateInvoice(Long orderId) {
+    public byte[] generateInvoice(UUID orderId) {
 
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));

@@ -1,29 +1,30 @@
 package com.restro.dto.response;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public class OrderItemResponse {
 
-    private Long orderItemId;
-    private Long menuId;
+    private UUID orderItemId;
+    private UUID menuId;
     private String menuName;
     private Integer quantity;
     private BigDecimal pricePerUnit;
     private BigDecimal totalPrice;
 
-    public Long getOrderItemId() {
+    public UUID getOrderItemId() {
         return orderItemId;
     }
 
-    public void setOrderItemId(Long orderItemId) {
+    public void setOrderItemId(UUID orderItemId) {
         this.orderItemId = orderItemId;
     }
 
-    public Long getMenuId() {
+    public UUID getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(Long menuId) {
+    public void setMenuId(UUID menuId) {
         this.menuId = menuId;
     }
 
@@ -57,5 +58,17 @@ public class OrderItemResponse {
 
     public void setTotalPrice(BigDecimal totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderItemResponse{" +
+                "orderItemId=" + orderItemId +
+                ", menuId=" + menuId +
+                ", menuName='" + menuName + '\'' +
+                ", quantity=" + quantity +
+                ", pricePerUnit=" + pricePerUnit +
+                ", totalPrice=" + totalPrice +
+                '}';
     }
 }

@@ -3,6 +3,7 @@ package com.restro.controller;
 import com.restro.dto.request.*;
 import com.restro.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,6 +67,30 @@ public class AuthController {
     public ResponseEntity<ApiResponse> resetPassword(@RequestBody ResetPasswordRequest request) {
 
         ApiResponse response = authService.resetPassword(request);
+
+        return ResponseEntity
+                .status(response.getStatus())
+                .body(response);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/restaurant-owner")
+    public ResponseEntity<ApiResponse> createRestaurantAdmin(
+            @RequestBody RestaurantAdminRequest request) {
+
+        ApiResponse response = authService.createRestaurantAdmin(request);
+
+        return ResponseEntity
+                .status(response.getStatus())
+                .body(response);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/delivery-partner")
+    public ResponseEntity<ApiResponse> createDeliveryPartner(
+            @RequestBody DeliveryPartnerRequest request) {
+
+        ApiResponse response = authService.createDeliveryPartner(request);
 
         return ResponseEntity
                 .status(response.getStatus())

@@ -3,6 +3,7 @@ package com.restro.dto.request;
 import lombok.Data;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class RestaurantRequest {
@@ -13,11 +14,19 @@ public class RestaurantRequest {
     private String email;
 
     // menu IDs assigned to restaurant
-    private List<Long> menuIds;
+    private List<UUID> menuIds;
 
-    public String getName() {return name;}
-    public void setName(String name) {this.name = name;}
-    public String getAddress() {return address;}
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
 
     public void setAddress(String address) {
         this.address = address;
@@ -39,11 +48,11 @@ public class RestaurantRequest {
         this.email = email;
     }
 
-    public List<Long> getMenuIds() {
+    public List<UUID> getMenuIds() {
         return menuIds;
     }
 
-    public void setMenuIds(List<Long> menuIds) {
+    public void setMenuIds(List<UUID> menuIds) {
         this.menuIds = menuIds;
     }
 }

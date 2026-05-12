@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -36,7 +37,7 @@ public class OrderController {
     @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderResponse> getOrderById(
-            @PathVariable Long orderId
+            @PathVariable UUID orderId
     ) {
         return ResponseEntity.ok(orderService.getOrderById(orderId));
     }
@@ -52,7 +53,7 @@ public class OrderController {
     @PreAuthorize("hasRole('CUSTOMER')")
     @PutMapping("/cancel/{orderId}")
     public ResponseEntity<String> cancelOrder(
-            @PathVariable Long orderId
+            @PathVariable UUID orderId
     ) {
         return ResponseEntity.ok(orderService.cancelOrder(orderId));
     }
@@ -61,7 +62,7 @@ public class OrderController {
     @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("/track/{orderId}")
     public ResponseEntity<String> trackOrderStatus(
-            @PathVariable Long orderId
+            @PathVariable UUID orderId
     ) {
         return ResponseEntity.ok(orderService.trackOrderStatus(orderId));
     }
@@ -70,7 +71,7 @@ public class OrderController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/status/{orderId}")
     public ResponseEntity<String> updateOrderStatus(
-            @PathVariable Long orderId,
+            @PathVariable UUID orderId,
             @RequestParam String status
     ) {
         return ResponseEntity.ok(
@@ -79,7 +80,7 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}/invoice")
-    public ResponseEntity<byte[]> downloadInvoice(@PathVariable Long orderId) {
+    public ResponseEntity<byte[]> downloadInvoice(@PathVariable UUID orderId) {
 
         try {
             byte[] pdf = invoiceService.generateInvoice(orderId);

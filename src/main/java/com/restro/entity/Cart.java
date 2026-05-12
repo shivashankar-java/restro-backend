@@ -4,9 +4,12 @@ package com.restro.entity;
 import com.restro.entity.base.Audit;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "cart")
@@ -18,8 +21,10 @@ import java.util.List;
 public class Cart extends Audit{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @JdbcTypeCode(SqlTypes.CHAR)
+    @Column(columnDefinition = "CHAR(36)")
+    private UUID id;
 
     // One customer → one active cart
     @ManyToOne
@@ -58,11 +63,11 @@ public class Cart extends Audit{
     @Enumerated(EnumType.STRING)
     private CartStatus status; // ACTIVE, CHECKED_OUT, ABANDONED
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

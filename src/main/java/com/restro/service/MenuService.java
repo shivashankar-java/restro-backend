@@ -1,6 +1,7 @@
 package com.restro.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.restro.dto.request.MenuRequest;
 import com.restro.dto.response.MenuResponse;
@@ -12,9 +13,9 @@ public interface MenuService {
 
     List<MenuResponse> getAllMenu();
 
-    MenuResponse updateMenu(Long id, MenuRequest request);
+    MenuResponse updateMenu(UUID id, MenuRequest request);
 
-    void deleteMenu(Long id);
+    void deleteMenu(UUID id);
 
     List<MenuResponse> getMenuByCategory(Category category);
 }

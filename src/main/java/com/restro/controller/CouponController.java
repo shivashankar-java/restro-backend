@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/coupons")
@@ -45,7 +46,7 @@ public class CouponController {
     @PreAuthorize("hasRole('CUSTOMER')")
     @DeleteMapping("/remove/{cartId}")
     public ResponseEntity<ApplyCouponResponse> removeCoupon(
-            @PathVariable Long cartId) {
+            @PathVariable UUID cartId) {
         return ResponseEntity.ok(couponService.removeCoupon(cartId));
     }
 
@@ -58,7 +59,7 @@ public class CouponController {
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/disable/{couponId}")
     public ResponseEntity<String> disableCoupon(
-            @PathVariable Long couponId) {
+            @PathVariable UUID couponId) {
         return ResponseEntity.ok(couponService.disableCoupon(couponId));
     }
 }

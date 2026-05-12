@@ -3,10 +3,12 @@ package com.restro.dto.response;
 import com.restro.entity.Category;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class MenuResponse {
 
-	private Long id;
+	private UUID id;
 	private String name;
 	private String description;
 	private Double price;
@@ -14,11 +16,11 @@ public class MenuResponse {
 	private Boolean available;
 	private Double rating;
 
-	public Long getId() {
+	public UUID getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 

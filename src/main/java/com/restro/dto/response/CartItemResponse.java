@@ -3,11 +3,12 @@ package com.restro.dto.response;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Data
 public class CartItemResponse {
-    private Long cartItemId;
-    private Long menuId;
+    private UUID cartItemId;
+    private UUID menuId;
     private String menuName;
     private Integer quantity;
     private BigDecimal pricePerUnit;
@@ -15,19 +16,19 @@ public class CartItemResponse {
     private String customization;
     private String specialInstructions;
 
-    public Long getCartItemId() {
+    public UUID getCartItemId() {
         return cartItemId;
     }
 
-    public void setCartItemId(Long cartItemId) {
+    public void setCartItemId(UUID cartItemId) {
         this.cartItemId = cartItemId;
     }
 
-    public Long getMenuId() {
+    public UUID getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(Long menuId) {
+    public void setMenuId(UUID menuId) {
         this.menuId = menuId;
     }
 

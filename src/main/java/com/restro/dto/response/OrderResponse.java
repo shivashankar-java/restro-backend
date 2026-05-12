@@ -2,10 +2,11 @@ package com.restro.dto.response;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 public class OrderResponse {
 
-    private Long orderId;
+    private UUID orderId;
     private String orderNumber;
     private String restaurantName;
     private List<OrderItemResponse> items;
@@ -17,11 +18,11 @@ public class OrderResponse {
     private String deliveryAddress;
     private String status;
 
-    public Long getOrderId() {
+    public UUID getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Long orderId) {
+    public void setOrderId(UUID orderId) {
         this.orderId = orderId;
     }
 

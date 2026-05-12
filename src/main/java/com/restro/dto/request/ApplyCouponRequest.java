@@ -1,15 +1,17 @@
 package com.restro.dto.request;
 
+import java.util.UUID;
+
 public class ApplyCouponRequest {
 
-    private Long cartId;
+    private UUID cartId;
     private String couponCode;
 
-    public Long getCartId() {
+    public UUID getCartId() {
         return cartId;
     }
 
-    public void setCartId(Long cartId) {
+    public void setCartId(UUID cartId) {
         this.cartId = cartId;
     }
 
