@@ -35,36 +35,51 @@ public class RestaurantServiceImpl implements RestaurantService {
         this.foodCategoryRepository = foodCategoryRepository;
     }
 
-//    @Override
-//    public RestaurantResponse addRestaurant(RestaurantRequest request) {
-//
-//        Restaurant restaurant = restaurantMapper.toEntity(request);
-//
-//        // Category
-//        FoodCategory category =
-//                foodCategoryRepository.findById(request.getCategoryId())
-//                        .orElseThrow(() -> new RuntimeException("Category not found"));
-//
-//        List<UUID> menuIds =
-//                request.getMenus()
-//                        .stream()
-//                        .map(MenuRequest::getMenuId)
-//                        .toList();
-//
-//        List<MenuItem> menuItems =
-//                menuRepository.findAllById(menuIds);
-//
-//        restaurant.setCategory(category);
-//        restaurant.setMenuItems(menuItems);
-//
-//        Restaurant saved = restaurantRepository.save(restaurant);
-//
-//        return restaurantMapper.toResponse(saved);
-//    }
-
     @Override
     public RestaurantResponse addRestaurant(RestaurantRequest request) {
-        return null;
+
+        Restaurant restaurant = restaurantMapper.toEntity(request);
+
+        // Restaurant Category
+        FoodCategory category =
+                foodCategoryRepository.findById(request.getCategoryId())
+                        .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        restaurant.setCategory(category);
+
+        // Convert MenuRequest -> MenuItem
+        List<MenuItem> menuItems = request.getMenus()
+                .stream()
+                .map(menuRequest -> {
+
+                    FoodCategory menuCategory =
+                            foodCategoryRepository.findById(menuRequest.getCategoryId())
+                                    .orElseThrow(() ->
+                                            new RuntimeException("Menu category not found"));
+
+                    MenuItem menuItem = new MenuItem();
+
+                    menuItem.setName(menuRequest.getName());
+                    menuItem.setDescription(menuRequest.getDescription());
+                    menuItem.setPrice(menuRequest.getPrice());
+                    menuItem.setAvailable(menuRequest.getAvailable());
+                    menuItem.setRating(menuRequest.getRating());
+                    menuItem.setMenuImageUrl(menuRequest.getMenuImageUrl());
+
+                    menuItem.setCategory(menuCategory);
+
+                    // relationship
+                    menuItem.setRestaurant(restaurant);
+
+                    return menuItem;
+                })
+                .toList();
+
+        restaurant.setMenuItems(menuItems);
+
+        Restaurant saved = restaurantRepository.save(restaurant);
+
+        return restaurantMapper.toResponse(saved);
     }
 
     // CUSTOMER → Get Restaurants by Menu Item

@@ -13,9 +13,14 @@ public class RestaurantRequest {
     private String phone;
     private String email;
 
+    private String location;
+    private Double rating;
+    private String deliveryTime;
+    private String image;
+    private Double price;
+
     private UUID categoryId;
 
-    // Multiple menus
     private List<MenuRequest> menus;
 
     public String getName() {
@@ -50,12 +55,44 @@ public class RestaurantRequest {
         this.email = email;
     }
 
-    public List<MenuRequest> getMenus() {
-        return menus;
+    public String getLocation() {
+        return location;
     }
 
-    public void setMenus(List<MenuRequest> menus) {
-        this.menus = menus;
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+
+    public String getDeliveryTime() {
+        return deliveryTime;
+    }
+
+    public void setDeliveryTime(String deliveryTime) {
+        this.deliveryTime = deliveryTime;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     public UUID getCategoryId() {
@@ -64,5 +101,13 @@ public class RestaurantRequest {
 
     public void setCategoryId(UUID categoryId) {
         this.categoryId = categoryId;
+    }
+
+    public List<MenuRequest> getMenus() {
+        return menus;
+    }
+
+    public void setMenus(List<MenuRequest> menus) {
+        this.menus = menus;
     }
 }

@@ -23,6 +23,7 @@ public class MenuItem extends Audit {
     private String name;
 	private String description;
     private Double price;
+	private String menuImageUrl;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
@@ -31,8 +32,9 @@ public class MenuItem extends Audit {
 	private Boolean available;
 	private Double rating;
 
-	@ManyToMany(mappedBy = "menuItems")
-	private List<Restaurant> restaurants;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "restaurant_id")
+	private Restaurant restaurant;
 
 	public UUID getId() {
 		return id;
@@ -90,11 +92,19 @@ public class MenuItem extends Audit {
 		this.rating = rating;
 	}
 
-	public List<Restaurant> getRestaurants() {
-		return restaurants;
+	public Restaurant getRestaurant() {
+		return restaurant;
 	}
 
-	public void setRestaurants(List<Restaurant> restaurants) {
-		this.restaurants = restaurants;
+	public void setRestaurant(Restaurant restaurant) {
+		this.restaurant = restaurant;
+	}
+
+	public String getMenuImageUrl() {
+		return menuImageUrl;
+	}
+
+	public void setMenuImageUrl(String menuImageUrl) {
+		this.menuImageUrl = menuImageUrl;
 	}
 }

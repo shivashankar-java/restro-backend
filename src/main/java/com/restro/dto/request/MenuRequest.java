@@ -12,6 +12,7 @@ public class MenuRequest {
     private UUID categoryId;
     private Boolean available;
     private Double rating;
+    private String menuImageUrl;
 
     public String getName() {
         return name;
@@ -59,5 +60,13 @@ public class MenuRequest {
 
     public void setRating(Double rating) {
         this.rating = rating;
+    }
+
+    public String getMenuImageUrl() {
+        return menuImageUrl;
+    }
+
+    public void setMenuImageUrl(String menuImageUrl) {
+        this.menuImageUrl = menuImageUrl;
     }
 }

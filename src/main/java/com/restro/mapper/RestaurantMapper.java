@@ -15,12 +15,18 @@ public interface RestaurantMapper {
 
     Restaurant toEntity(RestaurantRequest request);
 
+    @Mapping(target = "restaurantId", source = "id")
     @Mapping(target = "menuNames", source = "menuItems")
     RestaurantResponse toResponse(Restaurant restaurant);
 
     List<RestaurantResponse> toResponseList(List<Restaurant> restaurants);
 
     default List<String> mapMenuItems(List<MenuItem> menuItems) {
+
+        if (menuItems == null) {
+            return List.of();
+        }
+
         return menuItems.stream()
                 .map(MenuItem::getName)
                 .toList();

@@ -30,10 +30,9 @@ public class Restaurant extends Audit{
     private String image;
     private Double price;
 
-    @ManyToMany
-    @JoinTable(name = "restaurant_menu",
-            joinColumns = @JoinColumn(name = "restaurant_id"),
-            inverseJoinColumns = @JoinColumn(name = "menu_id"))
+    @OneToMany(mappedBy = "restaurant",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<MenuItem> menuItems;
 
     @ManyToOne(fetch = FetchType.LAZY)

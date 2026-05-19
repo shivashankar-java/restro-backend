@@ -3,6 +3,7 @@ package com.restro.service.impl;
 import com.restro.config.SecurityUtils;
 import com.restro.dto.request.*;
 import com.restro.dto.response.ApiResponse;
+import com.restro.dto.response.UserResponse;
 import com.restro.entity.*;
 import com.restro.repository.RestaurantRepository;
 import com.restro.repository.UserOtpRepository;
@@ -19,7 +20,9 @@ import com.restro.repository.UserRepository;
 import com.restro.service.AuthService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -359,6 +362,50 @@ public class AuthServiceImpl implements AuthService {
         userRepository.save(user);
 
         return new ApiResponse(200, "Delivery Partner created by " + currentAdmin);
+    }
+
+    @Override
+    public List<UserResponse> getAllUsers() {
+
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public UserResponse getUserById(UUID userId) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new RuntimeException("User not found"));
+
+        return mapToResponse(user);
+    }
+
+    @Override
+    public List<UserResponse> getUsersByRole(Role role) {
+
+        List<User> users = userRepository.findByRole(role);
+
+        return users.stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    private UserResponse mapToResponse(User user) {
+
+        UserResponse response = new UserResponse();
+
+        response.setId(user.getId());
+        response.setName(user.getName());
+        response.setEmail(user.getEmail());
+        response.setMobileNumber(user.getMobileNumber());
+        response.setRole(user.getRole());
+        response.setActive(user.getActive());
+
+        return response;
     }
 
 }

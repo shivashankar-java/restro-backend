@@ -2,15 +2,17 @@ package com.restro.controller;
 
 import com.restro.dto.request.*;
 import com.restro.dto.response.ApiResponse;
+import com.restro.dto.response.UserResponse;
+import com.restro.entity.Role;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.restro.dto.response.AuthResponse;
 import com.restro.service.AuthService;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/auth")
@@ -95,6 +97,21 @@ public class AuthController {
         return ResponseEntity
                 .status(response.getStatus())
                 .body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        return ResponseEntity.ok(authService.getAllUsers());
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserResponse> getUserById(@PathVariable UUID userId) {
+        return ResponseEntity.ok(authService.getUserById(userId));
+    }
+
+    @GetMapping("/role/{role}")
+    public ResponseEntity<List<UserResponse>> getUsersByRole(@PathVariable Role role) {
+        return ResponseEntity.ok(authService.getUsersByRole(role));
     }
 
 }
