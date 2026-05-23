@@ -1,5 +1,7 @@
 package com.restro.dto.response;
 
+import com.restro.entity.Status;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -8,7 +10,8 @@ public class FoodCategoryResponse {
     private UUID categoryId;
     private String categoryName;
     private String categoryImageUrl;
-    private List<RestaurantResponse> restaurants;
+    private String description;
+    private Status status;
 
     public UUID getCategoryId() {
         return categoryId;
@@ -34,21 +37,19 @@ public class FoodCategoryResponse {
         this.categoryImageUrl = categoryImageUrl;
     }
 
-    public List<RestaurantResponse> getRestaurants() {
-        return restaurants;
+    public String getDescription() {
+        return description;
     }
 
-    public void setRestaurants(List<RestaurantResponse> restaurants) {
-        this.restaurants = restaurants;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    @Override
-    public String toString() {
-        return "FoodCategoryResponse{" +
-                "categoryId=" + categoryId +
-                ", categoryName='" + categoryName + '\'' +
-                ", categoryImageUrl='" + categoryImageUrl + '\'' +
-                ", restaurants=" + restaurants +
-                '}';
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 }

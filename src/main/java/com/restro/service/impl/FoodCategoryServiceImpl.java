@@ -3,12 +3,15 @@ package com.restro.service.impl;
 import com.restro.dto.request.FoodCategoryRequest;
 import com.restro.dto.response.FoodCategoryResponse;
 import com.restro.entity.FoodCategory;
-import com.restro.entity.Restaurant;
+import com.restro.entity.Status;
 import com.restro.mapper.FoodCategoryMapper;
 import com.restro.repository.FoodCategoryRepository;
 import com.restro.repository.RestaurantRepository;
 import com.restro.service.FoodCategoryService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 import java.util.UUID;
@@ -27,16 +30,43 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
     }
 
     @Override
-    public FoodCategoryResponse createCategory(FoodCategoryRequest request) {
+    public FoodCategoryResponse addCategory(FoodCategoryRequest request) {
 
-        FoodCategory category = new FoodCategory();
+        FoodCategory category = foodCategoryMapper.toEntity(request);
+
+        FoodCategory savedCategory =
+                foodCategoryRepository.save(category);
+
+        return foodCategoryMapper.toResponse(savedCategory);
+    }
+
+    @Override
+    public FoodCategoryResponse updateCategory(UUID categoryId,
+                                               FoodCategoryRequest request) {
+
+        FoodCategory category = foodCategoryRepository.findById(categoryId)
+                .orElseThrow(() ->
+                        new RuntimeException("Category not found"));
 
         category.setCategoryName(request.getCategoryName());
         category.setCategoryImageUrl(request.getCategoryImageUrl());
+        category.setDescription(request.getDescription());
+        category.setStatus(request.getStatus());
 
-        FoodCategory savedCategory = foodCategoryRepository.save(category);
+        FoodCategory updatedCategory =
+                foodCategoryRepository.save(category);
 
-        return foodCategoryMapper.toResponse(savedCategory);
+        return foodCategoryMapper.toResponse(updatedCategory);
+    }
+
+    @Override
+    public void deleteCategory(UUID categoryId) {
+
+        FoodCategory category = foodCategoryRepository.findById(categoryId)
+                .orElseThrow(() ->
+                        new RuntimeException("Category not found"));
+
+        foodCategoryRepository.delete(category);
     }
 
     @Override
@@ -56,4 +86,44 @@ public class FoodCategoryServiceImpl implements FoodCategoryService {
                 .map(foodCategoryMapper::toResponse)
                 .toList();
     }
+
+
+    @Override
+    public Page<FoodCategoryResponse> getAllCategories(Pageable pageable) {
+
+        Page<FoodCategory> categories =
+                foodCategoryRepository.findAll(pageable);
+
+        return categories.map(foodCategoryMapper::toResponse);
+    }
+
+
+    @Override
+    public List<FoodCategoryResponse> searchCategories(String keyword) {
+
+        List<FoodCategory> categories =
+                foodCategoryRepository
+                        .findByCategoryNameContainingIgnoreCase(keyword);
+
+        return categories.stream()
+                .map(foodCategoryMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    public FoodCategoryResponse updateCategoryStatus(UUID categoryId,
+                                                     Status status) {
+
+        FoodCategory category = foodCategoryRepository.findById(categoryId)
+                .orElseThrow(() ->
+                        new RuntimeException("Category not found"));
+
+        category.setStatus(status);
+
+        FoodCategory updatedCategory =
+                foodCategoryRepository.save(category);
+
+        return foodCategoryMapper.toResponse(updatedCategory);
+    }
+
 }

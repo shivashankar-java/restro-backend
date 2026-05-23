@@ -21,4 +21,5 @@ public interface FoodCategoryMapper {
     List<RestaurantResponse> toRestaurantResponseList(List<Restaurant> restaurants);
 
     FoodCategoryResponse toResponse(FoodCategory category);
+
 }

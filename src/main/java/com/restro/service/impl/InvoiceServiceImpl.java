@@ -8,7 +8,6 @@ import com.restro.entity.Order;
 import com.restro.entity.OrderItem;
 import com.restro.repository.OrderRepository;
 import com.restro.service.InvoiceService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -126,7 +125,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 subTotal = subTotal.add(total);
                 gstTotal = gstTotal.add(gst);
 
-                table.addCell(getCell(item.getMenuItem().getName(), normal));
+                table.addCell(getCell(item.getMenuItem().getItemName(), normal));
                 table.addCell(getCell(String.valueOf(qty), normal));
                 table.addCell(getCell("₹" + price, normal));
                 table.addCell(getCell("₹" + gst.setScale(2, RoundingMode.HALF_UP), normal));

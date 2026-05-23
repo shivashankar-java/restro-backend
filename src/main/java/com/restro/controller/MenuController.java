@@ -1,12 +1,14 @@
 package com.restro.controller;
 
-import java.util.List;
 import java.util.UUID;
 
-import com.restro.entity.Category;
+import com.restro.dto.response.MenuDashboardResponse;
+import com.restro.entity.FoodType;
+import com.restro.entity.MenuStatus;
+import com.restro.service.JwtService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.restro.dto.request.MenuRequest;
@@ -18,48 +20,91 @@ import com.restro.service.MenuService;
 public class MenuController {
 
     private final MenuService menuService;
+    private final JwtService jwtService;
 
-    public MenuController(MenuService menuService) {
+    public MenuController(MenuService menuService, JwtService jwtService) {
         this.menuService = menuService;
+        this.jwtService = jwtService;
     }
 
-    // Add Menu
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
     @PostMapping
-    public ResponseEntity<MenuResponse> addMenu(@RequestBody MenuRequest request) {
-        MenuResponse response = menuService.addMenu(request);
+    public ResponseEntity<MenuResponse> createMenu(@RequestBody MenuRequest request) {
+        MenuResponse response = menuService.createMenu(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    // Get All Menu
-    @GetMapping
-    public ResponseEntity<List<MenuResponse>> getAllMenu() {
+    @GetMapping("/getAll-pagination")
+    public ResponseEntity<Page<MenuResponse>> getAllMenus(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-        return ResponseEntity.ok(menuService.getAllMenu());
+        Page<MenuResponse> response = menuService.getAllMenus(page, size);
+        return ResponseEntity.ok(response);
     }
 
-    // Update Menu
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
-    @PutMapping("/{id}")
-    public ResponseEntity<MenuResponse> updateMenu(@PathVariable UUID id,
-                                                   @RequestBody MenuRequest request) {
-        return ResponseEntity.ok(menuService.updateMenu(id, request));
+    @GetMapping("/{menuId}")
+    public ResponseEntity<MenuResponse> getMenuById(@PathVariable UUID menuId) {
+
+        MenuResponse response = menuService.getMenuById(menuId);
+        return ResponseEntity.ok(response);
     }
 
-    // Delete Menu
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteMenu(@PathVariable UUID id) {
+    @PutMapping("/{menuId}")
+    public ResponseEntity<MenuResponse> updateMenu(@PathVariable UUID menuId,
+            @RequestBody MenuRequest request) {
 
-        menuService.deleteMenu(id);
-        return ResponseEntity.ok("Menu item deleted successfully");
+        MenuResponse response = menuService.updateMenu(menuId, request);
+        return ResponseEntity.ok(response);
     }
 
-    // Get Menu By Category Name
-    @GetMapping("/category")
-    public ResponseEntity<List<MenuResponse>> getMenuByCategory(@RequestParam String categoryName) {
+    @DeleteMapping("/{menuId}")
+    public ResponseEntity<String> deleteMenu(@PathVariable UUID menuId) {
 
-        return ResponseEntity.ok(menuService.getMenuByCategory(categoryName));
+        menuService.deleteMenu(menuId);
+        return ResponseEntity.ok("Menu deleted successfully");
+    }
+
+    @GetMapping("/searchMenu")
+    public ResponseEntity<Page<MenuResponse>> searchMenus(@RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Page<MenuResponse> response = menuService.searchMenus(keyword, page, size);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/filterByCategory")
+    public ResponseEntity<Page<MenuResponse>> getMenusByCategory(@RequestParam String category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Page<MenuResponse> response = menuService.getMenusByCategory(category, page, size);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/filterByFood-type")
+    public ResponseEntity<Page<MenuResponse>> getMenusByFoodType(@RequestParam FoodType foodType,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Page<MenuResponse> response = menuService.getMenusByFoodType(foodType, page, size);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<Page<MenuResponse>> getMenusByStatus(@RequestParam MenuStatus status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Page<MenuResponse> response = menuService.getMenusByStatus(status, page, size);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/MenuDashboard")
+    public ResponseEntity<MenuDashboardResponse> getDashboard() {
+
+        MenuDashboardResponse response =menuService.getDashboard();
+        return ResponseEntity.ok(response);
     }
 
 }

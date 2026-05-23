@@ -20,17 +20,29 @@ public class MenuItem extends Audit {
 	@Column(columnDefinition = "CHAR(36)")
 	private UUID id;
 
-    private String name;
+	@Column(name = "item_name")
+	private String itemName;
+
 	private String description;
-    private Double price;
-	private String menuImageUrl;
+
+	private Double price;
+
+	@Column(name = "preparation_time")
+	private Integer preparationTime;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "food_type")
+	private FoodType foodType;
+
+	@Enumerated(EnumType.STRING)
+	private MenuStatus status;
+
+	@Column(name = "image_url")
+	private String imageUrl;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
 	private FoodCategory category;
-
-	private Boolean available;
-	private Double rating;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "restaurant_id")
@@ -44,12 +56,12 @@ public class MenuItem extends Audit {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getItemName() {
+		return itemName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setItemName(String itemName) {
+		this.itemName = itemName;
 	}
 
 	public String getDescription() {
@@ -68,6 +80,38 @@ public class MenuItem extends Audit {
 		this.price = price;
 	}
 
+	public Integer getPreparationTime() {
+		return preparationTime;
+	}
+
+	public void setPreparationTime(Integer preparationTime) {
+		this.preparationTime = preparationTime;
+	}
+
+	public FoodType getFoodType() {
+		return foodType;
+	}
+
+	public void setFoodType(FoodType foodType) {
+		this.foodType = foodType;
+	}
+
+	public MenuStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(MenuStatus status) {
+		this.status = status;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
 	public FoodCategory getCategory() {
 		return category;
 	}
@@ -76,35 +120,11 @@ public class MenuItem extends Audit {
 		this.category = category;
 	}
 
-	public Boolean getAvailable() {
-		return available;
-	}
-
-	public void setAvailable(Boolean available) {
-		this.available = available;
-	}
-
-	public Double getRating() {
-		return rating;
-	}
-
-	public void setRating(Double rating) {
-		this.rating = rating;
-	}
-
 	public Restaurant getRestaurant() {
 		return restaurant;
 	}
 
 	public void setRestaurant(Restaurant restaurant) {
 		this.restaurant = restaurant;
-	}
-
-	public String getMenuImageUrl() {
-		return menuImageUrl;
-	}
-
-	public void setMenuImageUrl(String menuImageUrl) {
-		this.menuImageUrl = menuImageUrl;
 	}
 }

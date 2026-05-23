@@ -17,6 +17,7 @@ import java.util.UUID;
 @Builder
 public class FoodCategory {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @JdbcTypeCode(SqlTypes.CHAR)
@@ -31,6 +32,13 @@ public class FoodCategory {
 
     @Column(name = "category_image_url")
     private String categoryImageUrl;
+
+    @Column(name = "description")
+    private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private Status status;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Restaurant> restaurants;
@@ -61,6 +69,22 @@ public class FoodCategory {
 
     public void setCategoryImageUrl(String categoryImageUrl) {
         this.categoryImageUrl = categoryImageUrl;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public List<Restaurant> getRestaurants() {

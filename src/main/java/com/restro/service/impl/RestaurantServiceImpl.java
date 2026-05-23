@@ -52,23 +52,20 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .stream()
                 .map(menuRequest -> {
 
-                    FoodCategory menuCategory =
-                            foodCategoryRepository.findById(menuRequest.getCategoryId())
-                                    .orElseThrow(() ->
-                                            new RuntimeException("Menu category not found"));
+                    FoodCategory menuCategory = foodCategoryRepository.findById(menuRequest.getCategoryId())
+                                    .orElseThrow(() -> new RuntimeException("Menu category not found"));
 
                     MenuItem menuItem = new MenuItem();
-
-                    menuItem.setName(menuRequest.getName());
+                    menuItem.setItemName(menuRequest.getItemName());
                     menuItem.setDescription(menuRequest.getDescription());
                     menuItem.setPrice(menuRequest.getPrice());
-                    menuItem.setAvailable(menuRequest.getAvailable());
-                    menuItem.setRating(menuRequest.getRating());
-                    menuItem.setMenuImageUrl(menuRequest.getMenuImageUrl());
-
+                    menuItem.setPreparationTime(menuRequest.getPreparationTime());
+                    menuItem.setFoodType(menuRequest.getFoodType());
+                    menuItem.setStatus(menuRequest.getStatus());
+                    menuItem.setImageUrl(menuRequest.getImageUrl());
                     menuItem.setCategory(menuCategory);
 
-                    // relationship
+                    // Relationship
                     menuItem.setRestaurant(restaurant);
 
                     return menuItem;

@@ -12,7 +12,7 @@ public interface OrderMapper {
 
     @Mapping(target = "orderItemId", source = "id")
     @Mapping(target = "menuId", source = "menuItem.id")
-    @Mapping(target = "menuName", source = "menuItem.name")
+    @Mapping(target = "menuName", source = "menuItem.itemName")  // ✅ FIXED
     OrderItemResponse toOrderItemResponse(OrderItem orderItem);
 
     @Mapping(target = "orderId", source = "id")

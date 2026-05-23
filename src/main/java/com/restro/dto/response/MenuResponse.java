@@ -1,6 +1,8 @@
 package com.restro.dto.response;
 
 import com.restro.entity.Category;
+import com.restro.entity.FoodType;
+import com.restro.entity.MenuStatus;
 import lombok.Data;
 
 import java.util.UUID;
@@ -8,28 +10,31 @@ import java.util.UUID;
 @Data
 public class MenuResponse {
 
-	private UUID id;
-	private String name;
+	private UUID menuId;
+	private String itemName;
 	private String description;
 	private Double price;
-	private String category;
-	private Boolean available;
-	private Double rating;
+	private Integer preparationTime;
+	private FoodType foodType;
+	private MenuStatus status;
+	private UUID categoryId;
+	private String categoryName;
+	private String imageUrl;
 
-	public UUID getId() {
-		return id;
+	public UUID getMenuId() {
+		return menuId;
 	}
 
-	public void setId(UUID id) {
-		this.id = id;
+	public void setMenuId(UUID menuId) {
+		this.menuId = menuId;
 	}
 
-	public String getName() {
-		return name;
+	public String getItemName() {
+		return itemName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setItemName(String itemName) {
+		this.itemName = itemName;
 	}
 
 	public String getDescription() {
@@ -48,27 +53,51 @@ public class MenuResponse {
 		this.price = price;
 	}
 
-	public String getCategory() {
-		return category;
+	public Integer getPreparationTime() {
+		return preparationTime;
 	}
 
-	public void setCategory(String category) {
-		this.category = category;
+	public void setPreparationTime(Integer preparationTime) {
+		this.preparationTime = preparationTime;
 	}
 
-	public Boolean getAvailable() {
-		return available;
+	public FoodType getFoodType() {
+		return foodType;
 	}
 
-	public void setAvailable(Boolean available) {
-		this.available = available;
+	public void setFoodType(FoodType foodType) {
+		this.foodType = foodType;
 	}
 
-	public Double getRating() {
-		return rating;
+	public MenuStatus getStatus() {
+		return status;
 	}
 
-	public void setRating(Double rating) {
-		this.rating = rating;
+	public void setStatus(MenuStatus status) {
+		this.status = status;
+	}
+
+	public UUID getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(UUID categoryId) {
+		this.categoryId = categoryId;
+	}
+
+	public String getCategoryName() {
+		return categoryName;
+	}
+
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 }

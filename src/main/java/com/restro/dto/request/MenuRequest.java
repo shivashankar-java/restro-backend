@@ -1,25 +1,27 @@
 package com.restro.dto.request;
 
-import com.restro.entity.Category;
+import com.restro.entity.FoodType;
+import com.restro.entity.MenuStatus;
 
 import java.util.UUID;
 
 public class MenuRequest {
 
-    private String name;
+    private String itemName;
     private String description;
     private Double price;
+    private Integer preparationTime;
+    private FoodType foodType;
+    private MenuStatus status;
     private UUID categoryId;
-    private Boolean available;
-    private Double rating;
-    private String menuImageUrl;
+    private String imageUrl;
 
-    public String getName() {
-        return name;
+    public String getItemName() {
+        return itemName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
     public String getDescription() {
@@ -38,6 +40,30 @@ public class MenuRequest {
         this.price = price;
     }
 
+    public Integer getPreparationTime() {
+        return preparationTime;
+    }
+
+    public void setPreparationTime(Integer preparationTime) {
+        this.preparationTime = preparationTime;
+    }
+
+    public FoodType getFoodType() {
+        return foodType;
+    }
+
+    public void setFoodType(FoodType foodType) {
+        this.foodType = foodType;
+    }
+
+    public MenuStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(MenuStatus status) {
+        this.status = status;
+    }
+
     public UUID getCategoryId() {
         return categoryId;
     }
@@ -46,27 +72,11 @@ public class MenuRequest {
         this.categoryId = categoryId;
     }
 
-    public Boolean getAvailable() {
-        return available;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setAvailable(Boolean available) {
-        this.available = available;
-    }
-
-    public Double getRating() {
-        return rating;
-    }
-
-    public void setRating(Double rating) {
-        this.rating = rating;
-    }
-
-    public String getMenuImageUrl() {
-        return menuImageUrl;
-    }
-
-    public void setMenuImageUrl(String menuImageUrl) {
-        this.menuImageUrl = menuImageUrl;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
