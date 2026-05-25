@@ -11,14 +11,11 @@ import java.util.UUID;
 public interface CouponService {
 
     CouponResponse createCoupon(CreateCouponRequest request);
-
+    CouponResponse updateCoupon(UUID couponId, CreateCouponRequest request);
+    CouponResponse getCouponById(UUID couponId);
     List<CouponResponse> getAllCoupons();
+    void deleteCoupon(UUID couponId);
+    CouponResponse changeStatus(UUID couponId, String status);
 
     ApplyCouponResponse applyCoupon(ApplyCouponRequest request);
-
-    ApplyCouponResponse removeCoupon(UUID cartId);
-
-    CouponResponse getCouponByCode(String code);
-
-    String disableCoupon(UUID couponId);
 }

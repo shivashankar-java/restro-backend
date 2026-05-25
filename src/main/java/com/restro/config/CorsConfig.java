@@ -16,7 +16,9 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
 
                 registry.addMapping("/**")   // allow all endpoints
-                        .allowedOrigins("http://localhost:5173","http://localhost:5174","https://restrofeast.netlify.app/")
+                        .allowedOrigins("http://localhost:5173",
+                                "http://172.16.69.172:5174",
+                                "http://localhost:5174","https://restrofeast.netlify.app/")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

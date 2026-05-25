@@ -49,14 +49,23 @@ public class SecurityConfig {
 						.requestMatchers("/api/cart/**").hasRole("CUSTOMER")
 						.requestMatchers("/api/orders/**").hasRole("CUSTOMER")
 
-						//  COUPONS
-						.requestMatchers(HttpMethod.POST, "/api/coupons/**").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.PUT, "/api/coupons/**").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.DELETE, "/api/coupons/**").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.GET, "/api/coupons/**")
-						.hasAnyRole("ADMIN", "CUSTOMER")
+						// COUPONS
+						.requestMatchers(HttpMethod.POST, "/api/restaurant/coupons/**")
+						.hasRole("RESTAURANT_OWNER")
 
-						.requestMatchers(HttpMethod.POST, "/api/coupons/apply")
+						.requestMatchers(HttpMethod.PUT, "/api/restaurant/coupons/**")
+						.hasRole("RESTAURANT_OWNER")
+
+						.requestMatchers(HttpMethod.DELETE, "/api/restaurant/coupons/**"
+						).hasRole("RESTAURANT_OWNER")
+
+						.requestMatchers(HttpMethod.PATCH, "/api/restaurant/coupons/**")
+						.hasRole("RESTAURANT_OWNER")
+
+						.requestMatchers(HttpMethod.GET, "/api/restaurant/coupons/**")
+						.hasAnyRole("RESTAURANT_OWNER", "CUSTOMER")
+
+						.requestMatchers(HttpMethod.POST, "/api/restaurant/coupons/apply")
 						.hasRole("CUSTOMER")
 
 						//  RESTAURANTS

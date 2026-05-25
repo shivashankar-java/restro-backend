@@ -2,5 +2,8 @@ package com.restro.entity;
 
 public enum DiscountType {
     PERCENTAGE,
-    FIXED
+    FIXED,
+    FLAT,
+    FREE_DELIVERY,
+    BOGO
 }

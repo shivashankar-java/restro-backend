@@ -6,8 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -23,40 +22,65 @@ public class Coupon extends Audit {
     @GeneratedValue(strategy = GenerationType.UUID)
     @JdbcTypeCode(SqlTypes.CHAR)
     @Column(columnDefinition = "CHAR(36)")
-    private UUID id;
+    private UUID couponId;
 
-    @Column(unique = true, nullable = false)
-    private String code;   //  THIS MUST EXIST
+    @Column(nullable = false)
+    private String title;
 
+    @Column(nullable = false, unique = true)
+    private String couponCode;
+
+    @Column(length = 500)
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "discount_type")
+    @Column(nullable = false)
     private DiscountType discountType;
+    // PERCENTAGE / FLAT / FREE_DELIVERY / BOGO
 
-    private BigDecimal discountValue;
-    private BigDecimal minimumOrderAmount;
-    private BigDecimal maximumDiscount;
+    private Double discountValue;
 
-    private LocalDateTime validFrom;
-    private LocalDateTime validUntil;
+    private Double minimumOrderAmount;
 
-    private Boolean active;
+    private Integer usageLimit;
 
-    public UUID getId() {
-        return id;
+    private Integer usedCount = 0;
+
+    private LocalDate startDate;
+
+    private LocalDate endDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CouponStatus status;
+    // ACTIVE / INACTIVE / EXPIRED
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
+
+    public UUID getCouponId() {
+        return couponId;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setCouponId(UUID couponId) {
+        this.couponId = couponId;
     }
 
-    public String getCode() {
-        return code;
+    public String getTitle() {
+        return title;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getCouponCode() {
+        return couponCode;
+    }
+
+    public void setCouponCode(String couponCode) {
+        this.couponCode = couponCode;
     }
 
     public String getDescription() {
@@ -75,51 +99,67 @@ public class Coupon extends Audit {
         this.discountType = discountType;
     }
 
-    public BigDecimal getDiscountValue() {
+    public Double getDiscountValue() {
         return discountValue;
     }
 
-    public void setDiscountValue(BigDecimal discountValue) {
+    public void setDiscountValue(Double discountValue) {
         this.discountValue = discountValue;
     }
 
-    public BigDecimal getMinimumOrderAmount() {
+    public Double getMinimumOrderAmount() {
         return minimumOrderAmount;
     }
 
-    public void setMinimumOrderAmount(BigDecimal minimumOrderAmount) {
+    public void setMinimumOrderAmount(Double minimumOrderAmount) {
         this.minimumOrderAmount = minimumOrderAmount;
     }
 
-    public BigDecimal getMaximumDiscount() {
-        return maximumDiscount;
+    public Integer getUsageLimit() {
+        return usageLimit;
     }
 
-    public void setMaximumDiscount(BigDecimal maximumDiscount) {
-        this.maximumDiscount = maximumDiscount;
+    public void setUsageLimit(Integer usageLimit) {
+        this.usageLimit = usageLimit;
     }
 
-    public LocalDateTime getValidFrom() {
-        return validFrom;
+    public Integer getUsedCount() {
+        return usedCount;
     }
 
-    public void setValidFrom(LocalDateTime validFrom) {
-        this.validFrom = validFrom;
+    public void setUsedCount(Integer usedCount) {
+        this.usedCount = usedCount;
     }
 
-    public LocalDateTime getValidUntil() {
-        return validUntil;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setValidUntil(LocalDateTime validUntil) {
-        this.validUntil = validUntil;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public Boolean getActive() {
-        return active;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public CouponStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CouponStatus status) {
+        this.status = status;
+    }
+
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
     }
 }

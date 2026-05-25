@@ -1,84 +1,124 @@
 package com.restro.dto.response;
 
+import com.restro.entity.CouponStatus;
+import com.restro.entity.DiscountType;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
 public class CouponResponse {
 
-    private UUID id;
-    private String code;
-    private String discountType;
-    private BigDecimal discountValue;
-    private BigDecimal minimumOrderAmount;
-    private BigDecimal maxDiscountAmount;
-    private LocalDateTime expiryDate;
-    private Boolean active;
+    private UUID couponId;
+    private String title;
+    private String couponCode;
+    private String description;
+    private DiscountType discountType;
+    private Double discountValue;
+    private Double minimumOrderAmount;
+    private Integer usageLimit;
+    private Integer usedCount;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private CouponStatus status;
 
-    public UUID getId() {
-        return id;
+
+    public UUID getCouponId() {
+        return couponId;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setCouponId(UUID couponId) {
+        this.couponId = couponId;
     }
 
-    public String getCode() {
-        return code;
+    public String getTitle() {
+        return title;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getDiscountType() {
+    public String getCouponCode() {
+        return couponCode;
+    }
+
+    public void setCouponCode(String couponCode) {
+        this.couponCode = couponCode;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public DiscountType getDiscountType() {
         return discountType;
     }
 
-    public void setDiscountType(String discountType) {
+    public void setDiscountType(DiscountType discountType) {
         this.discountType = discountType;
     }
 
-    public BigDecimal getDiscountValue() {
+    public Double getDiscountValue() {
         return discountValue;
     }
 
-    public void setDiscountValue(BigDecimal discountValue) {
+    public void setDiscountValue(Double discountValue) {
         this.discountValue = discountValue;
     }
 
-    public BigDecimal getMinimumOrderAmount() {
+    public Double getMinimumOrderAmount() {
         return minimumOrderAmount;
     }
 
-    public void setMinimumOrderAmount(BigDecimal minimumOrderAmount) {
+    public void setMinimumOrderAmount(Double minimumOrderAmount) {
         this.minimumOrderAmount = minimumOrderAmount;
     }
 
-    public BigDecimal getMaxDiscountAmount() {
-        return maxDiscountAmount;
+    public Integer getUsageLimit() {
+        return usageLimit;
     }
 
-    public void setMaxDiscountAmount(BigDecimal maxDiscountAmount) {
-        this.maxDiscountAmount = maxDiscountAmount;
+    public void setUsageLimit(Integer usageLimit) {
+        this.usageLimit = usageLimit;
     }
 
-    public LocalDateTime getExpiryDate() {
-        return expiryDate;
+    public Integer getUsedCount() {
+        return usedCount;
     }
 
-    public void setExpiryDate(LocalDateTime expiryDate) {
-        this.expiryDate = expiryDate;
+    public void setUsedCount(Integer usedCount) {
+        this.usedCount = usedCount;
     }
 
-    public Boolean getActive() {
-        return active;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
+
+    public CouponStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CouponStatus status) {
+        this.status = status;
     }
 }

@@ -1,29 +1,37 @@
 package com.restro.dto.request;
 
+import com.restro.entity.DiscountType;
 import lombok.Data;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 public class CreateCouponRequest {
 
-    private String code;
+    private String title;
+    private String couponCode;
     private String description;
-    private String discountType;
-    private BigDecimal discountValue;
-    private BigDecimal minimumOrderAmount;
-    private BigDecimal maximumDiscount;
-    private LocalDateTime validFrom;
-    private LocalDateTime validUntil;
-    private Boolean active;
+    private DiscountType discountType;
+    private Double discountValue;
+    private Double minimumOrderAmount;
+    private Integer usageLimit;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
-    public String getCode() {
-        return code;
+    public String getTitle() {
+        return title;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getCouponCode() {
+        return couponCode;
+    }
+
+    public void setCouponCode(String couponCode) {
+        this.couponCode = couponCode;
     }
 
     public String getDescription() {
@@ -34,59 +42,51 @@ public class CreateCouponRequest {
         this.description = description;
     }
 
-    public String getDiscountType() {
+    public DiscountType getDiscountType() {
         return discountType;
     }
 
-    public void setDiscountType(String discountType) {
+    public void setDiscountType(DiscountType discountType) {
         this.discountType = discountType;
     }
 
-    public BigDecimal getDiscountValue() {
+    public Double getDiscountValue() {
         return discountValue;
     }
 
-    public void setDiscountValue(BigDecimal discountValue) {
+    public void setDiscountValue(Double discountValue) {
         this.discountValue = discountValue;
     }
 
-    public BigDecimal getMinimumOrderAmount() {
+    public Double getMinimumOrderAmount() {
         return minimumOrderAmount;
     }
 
-    public void setMinimumOrderAmount(BigDecimal minimumOrderAmount) {
+    public void setMinimumOrderAmount(Double minimumOrderAmount) {
         this.minimumOrderAmount = minimumOrderAmount;
     }
 
-    public BigDecimal getMaximumDiscount() {
-        return maximumDiscount;
+    public Integer getUsageLimit() {
+        return usageLimit;
     }
 
-    public void setMaximumDiscount(BigDecimal maximumDiscount) {
-        this.maximumDiscount = maximumDiscount;
+    public void setUsageLimit(Integer usageLimit) {
+        this.usageLimit = usageLimit;
     }
 
-    public LocalDateTime getValidFrom() {
-        return validFrom;
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
-    public void setValidFrom(LocalDateTime validFrom) {
-        this.validFrom = validFrom;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
-    public LocalDateTime getValidUntil() {
-        return validUntil;
+    public LocalDate getEndDate() {
+        return endDate;
     }
 
-    public void setValidUntil(LocalDateTime validUntil) {
-        this.validUntil = validUntil;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 }

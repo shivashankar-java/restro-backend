@@ -4,16 +4,8 @@ import java.util.UUID;
 
 public class ApplyCouponRequest {
 
-    private UUID cartId;
     private String couponCode;
-
-    public UUID getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(UUID cartId) {
-        this.cartId = cartId;
-    }
+    private Double orderAmount;
 
     public String getCouponCode() {
         return couponCode;
@@ -21,5 +13,13 @@ public class ApplyCouponRequest {
 
     public void setCouponCode(String couponCode) {
         this.couponCode = couponCode;
+    }
+
+    public Double getOrderAmount() {
+        return orderAmount;
+    }
+
+    public void setOrderAmount(Double orderAmount) {
+        this.orderAmount = orderAmount;
     }
 }
