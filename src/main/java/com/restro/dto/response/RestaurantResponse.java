@@ -2,22 +2,32 @@ package com.restro.dto.response;
 
 import lombok.Data;
 
-import java.util.List;
 import java.util.UUID;
 
 @Data
 public class RestaurantResponse {
 
     private UUID restaurantId;
-    private String name;
-    private String location;
-    private Double rating;
-    private String deliveryTime;
-    private String image;
 
-    private Double price;
+    private String restaurantName;
 
-    private List<String> menuNames;
+    private String email;
+
+    private String phone;
+
+    private String city;
+
+    private String state;
+
+    private Boolean active;
+
+    // OWNER INFO
+    private String ownerName;
+
+    private String ownerEmail;
+
+    // TEMP PASSWORD
+    private String temporaryPassword;
 
     public UUID getRestaurantId() {
         return restaurantId;
@@ -27,61 +37,75 @@ public class RestaurantResponse {
         this.restaurantId = restaurantId;
     }
 
-    public String getName() {
-        return name;
+    public String getRestaurantName() {
+        return restaurantName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
     }
 
-    public String getLocation() {
-        return location;
+    public String getEmail() {
+        return email;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public Double getRating() {
-        return rating;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setRating(Double rating) {
-        this.rating = rating;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    public String getDeliveryTime() {
-        return deliveryTime;
+    public String getCity() {
+        return city;
     }
 
-    public void setDeliveryTime(String deliveryTime) {
-        this.deliveryTime = deliveryTime;
+    public void setCity(String city) {
+        this.city = city;
     }
 
-    public String getImage() {
-        return image;
+    public String getState() {
+        return state;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setState(String state) {
+        this.state = state;
     }
 
-    public Double getPrice() {
-        return price;
+    public Boolean getActive() {
+        return active;
     }
 
-    public void setPrice(Double price) {
-        this.price = price;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
-    public List<String> getMenuNames() {
-        return menuNames;
+    public String getOwnerName() {
+        return ownerName;
     }
 
-    public void setMenuNames(List<String> menuNames) {
-        this.menuNames = menuNames;
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
+    public String getOwnerEmail() {
+        return ownerEmail;
+    }
 
+    public void setOwnerEmail(String ownerEmail) {
+        this.ownerEmail = ownerEmail;
+    }
+
+    public String getTemporaryPassword() {
+        return temporaryPassword;
+    }
+
+    public void setTemporaryPassword(String temporaryPassword) {
+        this.temporaryPassword = temporaryPassword;
+    }
 }

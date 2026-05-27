@@ -42,6 +42,9 @@ public class SecurityConfig {
 						//  ADMIN only
 						.requestMatchers("/admin/**").hasRole("ADMIN")
 
+						// ADMIN ONLY
+						.requestMatchers("/api/restaurants/**").hasRole("ADMIN")
+
 						// CATEGORY APIs
 						.requestMatchers("/api/categories/**").permitAll()
 

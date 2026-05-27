@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface MenuItemRepository extends JpaRepository<MenuItem, UUID> {
@@ -57,4 +58,7 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, UUID> {
             """)
     Double getAveragePriceByRestaurant(@Param("restaurantId") UUID restaurantId);
 
+    List<MenuItem> findByRestaurantId(UUID restaurantId);
+
+    Optional<MenuItem> findByRestaurantIdAndItemNameIgnoreCase(UUID restaurantId, String itemName);
 }

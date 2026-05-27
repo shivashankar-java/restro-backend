@@ -1,5 +1,6 @@
 package com.restro.controller;
 
+import java.util.List;
 import java.util.UUID;
 
 import com.restro.dto.response.MenuDashboardResponse;
@@ -105,6 +106,12 @@ public class MenuController {
 
         MenuDashboardResponse response =menuService.getDashboard();
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MenuResponse>> getAllMenus() {
+        List<MenuResponse> menus = menuService.getAllMenus();
+        return ResponseEntity.ok(menus);
     }
 
 }

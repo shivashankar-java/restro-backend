@@ -75,17 +75,17 @@ public class AuthController {
                 .body(response);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/restaurant-owner")
-    public ResponseEntity<ApiResponse> createRestaurantAdmin(
-            @RequestBody RestaurantAdminRequest request) {
-
-        ApiResponse response = authService.createRestaurantAdmin(request);
-
-        return ResponseEntity
-                .status(response.getStatus())
-                .body(response);
-    }
+//    @PreAuthorize("hasRole('ADMIN')")
+//    @PostMapping("/restaurant-owner")
+//    public ResponseEntity<ApiResponse> createRestaurantAdmin(
+//            @RequestBody RestaurantAdminRequest request) {
+//
+//        ApiResponse response = authService.createRestaurantAdmin(request);
+//
+//        return ResponseEntity
+//                .status(response.getStatus())
+//                .body(response);
+//    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/delivery-partner")

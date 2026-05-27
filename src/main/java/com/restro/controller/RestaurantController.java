@@ -1,8 +1,10 @@
 package com.restro.controller;
 
+import com.restro.dto.request.RestaurantAdminRequest;
 import com.restro.dto.request.RestaurantRequest;
 import com.restro.dto.response.RestaurantResponse;
 import com.restro.service.RestaurantService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,35 +22,46 @@ public class RestaurantController {
         this.restaurantService = restaurantService;
     }
 
-    // ADMIN ONLY → Add Restaurant
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<RestaurantResponse> addRestaurant(
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<RestaurantResponse> createRestaurant(
+            @RequestBody RestaurantAdminRequest request) {
+
+        RestaurantResponse response = restaurantService.createRestaurant(request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    // UPDATE
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/{restaurantId}")
+    public ResponseEntity<RestaurantResponse> updateRestaurant(@PathVariable UUID restaurantId,
             @RequestBody RestaurantRequest request) {
 
-        return ResponseEntity.ok(
-                restaurantService.addRestaurant(request)
-        );
+        return ResponseEntity.ok(restaurantService.updateRestaurant(
+                restaurantId,
+                request));
     }
 
-    // CUSTOMER + ADMIN → Get restaurants by menu item
-    @GetMapping("/by-menu/{menuId}")
-    public ResponseEntity<List<RestaurantResponse>> getRestaurantsByMenu(
-            @PathVariable UUID menuId) {
-
-        return ResponseEntity.ok(
-                restaurantService.getRestaurantsByMenu(menuId)
-        );
+    // GET BY ID
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/{restaurantId}")
+    public ResponseEntity<RestaurantResponse> getRestaurantById(@PathVariable UUID restaurantId) {
+        return ResponseEntity.ok(restaurantService.getRestaurantById(restaurantId));
     }
 
-    // Get all restaurants
+    // GET ALL
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<RestaurantResponse>> getAllRestaurants() {
-        return ResponseEntity.ok(
-                restaurantService.getAllRestaurants()
-        );
+        return ResponseEntity.ok(restaurantService.getAllRestaurants());
     }
 
+    // DELETE
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{restaurantId}")
+    public ResponseEntity<String> deleteRestaurant(@PathVariable UUID restaurantId) {
 
-
+        restaurantService.deleteRestaurant(restaurantId);
+        return ResponseEntity.ok("Restaurant deleted successfully");
+    }
 }

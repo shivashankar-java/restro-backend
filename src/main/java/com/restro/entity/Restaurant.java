@@ -19,16 +19,25 @@ public class Restaurant extends Audit{
     @Column(columnDefinition = "CHAR(36)")
     private UUID id;
 
-    private String name;
-    private String address;
+    private String restaurantName;
+    private String description;
     private String phone;
     private String email;
     private String password;
-    private String location;
+    private String address;
+    private String city;
+    private String state;
+    private String openingTime;
+    private String closingTime;
     private Double rating;
-    private String deliveryTime;
     private String image;
     private Double price;
+    private Boolean active;
+
+    // OWNER DETAILS
+    private String ownerName;
+    private String ownerEmail;
+    private String ownerPhone;
 
     @OneToMany(mappedBy = "restaurant",
             cascade = CascadeType.ALL,
@@ -47,20 +56,20 @@ public class Restaurant extends Audit{
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getRestaurantName() {
+        return restaurantName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setRestaurantName(String restaurantName) {
+        this.restaurantName = restaurantName;
     }
 
-    public String getAddress() {
-        return address;
+    public String getDescription() {
+        return description;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getPhone() {
@@ -87,12 +96,44 @@ public class Restaurant extends Audit{
         this.password = password;
     }
 
-    public String getLocation() {
-        return location;
+    public String getAddress() {
+        return address;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getOpeningTime() {
+        return openingTime;
+    }
+
+    public void setOpeningTime(String openingTime) {
+        this.openingTime = openingTime;
+    }
+
+    public String getClosingTime() {
+        return closingTime;
+    }
+
+    public void setClosingTime(String closingTime) {
+        this.closingTime = closingTime;
     }
 
     public Double getRating() {
@@ -103,36 +144,12 @@ public class Restaurant extends Audit{
         this.rating = rating;
     }
 
-    public String getDeliveryTime() {
-        return deliveryTime;
-    }
-
-    public void setDeliveryTime(String deliveryTime) {
-        this.deliveryTime = deliveryTime;
-    }
-
     public String getImage() {
         return image;
     }
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public FoodCategory getCategory() {
-        return category;
-    }
-
-    public void setCategory(FoodCategory category) {
-        this.category = category;
-    }
-
-    public List<MenuItem> getMenuItems() {
-        return menuItems;
-    }
-
-    public void setMenuItems(List<MenuItem> menuItems) {
-        this.menuItems = menuItems;
     }
 
     public Double getPrice() {
@@ -143,22 +160,51 @@ public class Restaurant extends Audit{
         this.price = price;
     }
 
-    @Override
-    public String toString() {
-        return "Restaurant{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", phone='" + phone + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", location='" + location + '\'' +
-                ", rating=" + rating +
-                ", deliveryTime='" + deliveryTime + '\'' +
-                ", image='" + image + '\'' +
-                ", price=" + price +
-                ", menuItems=" + menuItems +
-                ", category=" + category +
-                '}';
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
+    public List<MenuItem> getMenuItems() {
+        return menuItems;
+    }
+
+    public void setMenuItems(List<MenuItem> menuItems) {
+        this.menuItems = menuItems;
+    }
+
+    public FoodCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(FoodCategory category) {
+        this.category = category;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getOwnerEmail() {
+        return ownerEmail;
+    }
+
+    public void setOwnerEmail(String ownerEmail) {
+        this.ownerEmail = ownerEmail;
+    }
+
+    public String getOwnerPhone() {
+        return ownerPhone;
+    }
+
+    public void setOwnerPhone(String ownerPhone) {
+        this.ownerPhone = ownerPhone;
     }
 }

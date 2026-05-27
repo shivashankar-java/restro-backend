@@ -21,6 +21,7 @@ import com.restro.service.AuthService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -132,45 +133,98 @@ public class AuthServiceImpl implements AuthService {
 
         logger.info("Login request received for username: {}", request.getEmail());
 
-        User user;
+        User user = null;
+        Restaurant restaurant = null;
 
-        // Check whether input is Email or Mobile Number
+        boolean isRestaurantOwner = false;
+
+        // LOGIN USING EMAIL
         if (request.getEmail().contains("@")) {
 
-            user = userRepository.findByEmail(request.getEmail())
-                    .orElseThrow(() -> {
-                        logger.error("Login failed: User not found with email -> {}", request.getEmail());
-                        return new RuntimeException("User not found");
-                    });
+            // FIRST CHECK USER TABLE
+            Optional<User> optionalUser =
+                    userRepository.findByEmail(request.getEmail());
+
+            if (optionalUser.isPresent()) {
+
+                user = optionalUser.get();
+
+            } else {
+
+                // CHECK RESTAURANT OWNER EMAIL
+                restaurant = restaurantRepository.findByOwnerEmail(request.getEmail())
+                        .orElseThrow(() -> {logger.error("Login failed: User/Restaurant Owner not found with email -> {}", request.getEmail());
+                            return new RuntimeException("User not found");
+                        });
+
+                isRestaurantOwner = true;
+            }
 
         } else {
 
-            user = userRepository.findByMobileNumber(request.getEmail())
-                    .orElseThrow(() -> {
-                        logger.error("Login failed: User not found with mobile number -> {}", request.getEmail());
-                        return new RuntimeException("User not found");
-                    });
+            // LOGIN USING MOBILE NUMBER
+            Optional<User> optionalUser =
+                    userRepository.findByMobileNumber(request.getEmail());
+
+            if (optionalUser.isPresent()) {
+                user = optionalUser.get();
+
+            } else {
+
+                restaurant = restaurantRepository.findByOwnerPhone(request.getEmail())
+                        .orElseThrow(() -> {
+                            logger.error("Login failed: User/Restaurant Owner not found with mobile -> {}", request.getEmail());
+                            return new RuntimeException("User not found");
+                        });
+
+                isRestaurantOwner = true;
+            }
         }
 
-        if (!passwordEncoder.matches(
-                request.getPassword(),
-                user.getPassword())) {
+        // PASSWORD CHECK
 
-            logger.error("Login failed: Invalid password for user -> {}", request.getEmail());
+        if (isRestaurantOwner) {
 
-            throw new RuntimeException("Invalid password");
+            if (!passwordEncoder.matches(request.getPassword(), restaurant.getPassword())) {
+
+                logger.error("Invalid password for restaurant owner -> {}", request.getEmail());
+                throw new RuntimeException("Invalid password");
+            }
+
+        } else {
+
+            if (!passwordEncoder.matches(
+                    request.getPassword(),
+                    user.getPassword())) {
+
+                logger.error("Invalid password for user -> {}", request.getEmail());
+                throw new RuntimeException("Invalid password");
+            }
         }
 
-        String token = jwtUtil.generateToken(
-                user.getEmail(),
-                user.getRole().name()
-        );
+        // JWT TOKEN
+        String token;
+
+        if (isRestaurantOwner) {
+
+            token = jwtUtil.generateToken(restaurant.getOwnerEmail(), "RESTAURANT_OWNER");
+
+        } else {
+            token = jwtUtil.generateToken(
+                    user.getEmail(),
+                    user.getRole().name()
+            );
+        }
 
         logger.info("Login successful for user: {}", request.getEmail());
-
         AuthResponse response = new AuthResponse();
         response.setToken(token);
-        response.setRole(user.getRole().name());
+
+        if (isRestaurantOwner) {
+            response.setRole("RESTAURANT_OWNER");
+        } else {
+            response.setRole(user.getRole().name());
+        }
 
         return response;
     }
@@ -291,52 +345,52 @@ public class AuthServiceImpl implements AuthService {
         return new ApiResponse(200, "Password reset successfully");
     }
 
-    @Override
-    public ApiResponse createRestaurantAdmin(RestaurantAdminRequest request) {
-        String currentAdmin = SecurityUtils.getCurrentUser();
-
-        // Validate admin
-        if (currentAdmin == null) {
-            return new ApiResponse(401, "Unauthorized");
-        }
-
-        if (userRepository.existsByEmail(request.getEmail())) {
-            return new ApiResponse(409, "Email already exists");
-        }
-
-        Restaurant restaurant = new Restaurant();
-
-        restaurant.setName(request.getRestaurantName());
-        restaurant.setAddress(request.getAddress());
-        restaurant.setPhone(request.getMobileNumber());
-        restaurant.setEmail(request.getEmail());
-
-        restaurant.setPassword(
-                passwordEncoder.encode(request.getPassword()));
-
-        restaurantRepository.save(restaurant);
-
-        User user = new User();
-
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setMobileNumber(request.getMobileNumber());
-
-        user.setPassword(
-                passwordEncoder.encode(request.getPassword())
-        );
-
-        user.setRole(Role.RESTAURANT_OWNER);
-        user.setRestaurant(restaurant);
-        user.setCreatedBy(currentAdmin);
-
-        userRepository.save(user);
-
-        return new ApiResponse(
-                200,
-                "Restaurant owner created successfully by " + currentAdmin
-        );
-    }
+//    @Override
+//    public ApiResponse createRestaurantAdmin(RestaurantAdminRequest request) {
+//        String currentAdmin = SecurityUtils.getCurrentUser();
+//
+//        // Validate admin
+//        if (currentAdmin == null) {
+//            return new ApiResponse(401, "Unauthorized");
+//        }
+//
+//        if (userRepository.existsByEmail(request.getEmail())) {
+//            return new ApiResponse(409, "Email already exists");
+//        }
+//
+//        Restaurant restaurant = new Restaurant();
+//
+//        restaurant.setName(request.getRestaurantName());
+//        restaurant.setAddress(request.getAddress());
+//        restaurant.setPhone(request.getMobileNumber());
+//        restaurant.setEmail(request.getEmail());
+//
+//        restaurant.setPassword(
+//                passwordEncoder.encode(request.getPassword()));
+//
+//        restaurantRepository.save(restaurant);
+//
+//        User user = new User();
+//
+//        user.setName(request.getName());
+//        user.setEmail(request.getEmail());
+//        user.setMobileNumber(request.getMobileNumber());
+//
+//        user.setPassword(
+//                passwordEncoder.encode(request.getPassword())
+//        );
+//
+//        user.setRole(Role.RESTAURANT_OWNER);
+//        user.setRestaurant(restaurant);
+//        user.setCreatedBy(currentAdmin);
+//
+//        userRepository.save(user);
+//
+//        return new ApiResponse(
+//                200,
+//                "Restaurant owner created successfully by " + currentAdmin
+//        );
+//    }
 
     @Override
     public ApiResponse createDeliveryPartner(DeliveryPartnerRequest request) {

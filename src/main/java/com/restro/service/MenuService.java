@@ -23,6 +23,7 @@ public interface MenuService {
     Page<MenuResponse> getMenusByFoodType(FoodType foodType, int page, int size);
     Page<MenuResponse> getMenusByStatus(MenuStatus status, int page, int size);
     MenuDashboardResponse getDashboard();
+    List<MenuResponse> getAllMenus();
 
 
 

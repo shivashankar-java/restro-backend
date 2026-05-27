@@ -2,6 +2,7 @@ package com.restro.service.impl;
 
 import com.restro.dto.request.MenuRequest;
 import com.restro.dto.request.MenuRequest1;
+import com.restro.dto.request.RestaurantAdminRequest;
 import com.restro.dto.request.RestaurantRequest;
 import com.restro.dto.response.RestaurantResponse;
 import com.restro.entity.FoodCategory;
@@ -12,6 +13,7 @@ import com.restro.repository.FoodCategoryRepository;
 import com.restro.repository.MenuItemRepository;
 import com.restro.repository.RestaurantRepository;
 import com.restro.service.RestaurantService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,85 +23,97 @@ import java.util.UUID;
 public class RestaurantServiceImpl implements RestaurantService {
 
     private final RestaurantRepository restaurantRepository;
-    private final MenuItemRepository menuRepository;
     private final RestaurantMapper restaurantMapper;
-    private final FoodCategoryRepository foodCategoryRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public RestaurantServiceImpl(
             RestaurantRepository restaurantRepository,
-            MenuItemRepository menuRepository,
-            RestaurantMapper restaurantMapper, FoodCategoryRepository foodCategoryRepository) {
+            RestaurantMapper restaurantMapper,
+            PasswordEncoder passwordEncoder) {
+
         this.restaurantRepository = restaurantRepository;
-        this.menuRepository = menuRepository;
         this.restaurantMapper = restaurantMapper;
-        this.foodCategoryRepository = foodCategoryRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    public RestaurantResponse addRestaurant(RestaurantRequest request) {
+    public RestaurantResponse createRestaurant(RestaurantAdminRequest request) {
 
+        // CHECK EMAIL EXISTS
+        if (restaurantRepository.existsByEmail(request.getEmail())) {
+            throw new RuntimeException("Restaurant email already exists");
+        }
+
+        String tempPassword = generateTempPassword();
         Restaurant restaurant = restaurantMapper.toEntity(request);
+        restaurant.setPassword(passwordEncoder.encode(tempPassword));
+        restaurant.setActive(true);
+        Restaurant savedRestaurant = restaurantRepository.save(restaurant);
 
-        // Restaurant Category
-        FoodCategory category =
-                foodCategoryRepository.findById(request.getCategoryId())
-                        .orElseThrow(() -> new RuntimeException("Category not found"));
+        RestaurantResponse response = new RestaurantResponse();
 
-        restaurant.setCategory(category);
+        response.setRestaurantId(savedRestaurant.getId());
+        response.setRestaurantName(savedRestaurant.getRestaurantName());
+        response.setEmail(savedRestaurant.getEmail());
+        response.setPhone(savedRestaurant.getPhone());
+        response.setCity(savedRestaurant.getCity());
+        response.setState(savedRestaurant.getState());
+        response.setActive(savedRestaurant.getActive());
 
-        // Convert MenuRequest -> MenuItem
-        List<MenuItem> menuItems = request.getMenus()
-                .stream()
-                .map(menuRequest -> {
-
-                    FoodCategory menuCategory = foodCategoryRepository.findById(menuRequest.getCategoryId())
-                                    .orElseThrow(() -> new RuntimeException("Menu category not found"));
-
-                    MenuItem menuItem = new MenuItem();
-                    menuItem.setItemName(menuRequest.getItemName());
-                    menuItem.setDescription(menuRequest.getDescription());
-                    menuItem.setPrice(menuRequest.getPrice());
-                    menuItem.setPreparationTime(menuRequest.getPreparationTime());
-                    menuItem.setFoodType(menuRequest.getFoodType());
-                    menuItem.setStatus(menuRequest.getStatus());
-                    menuItem.setImageUrl(menuRequest.getImageUrl());
-                    menuItem.setCategory(menuCategory);
-
-                    // Relationship
-                    menuItem.setRestaurant(restaurant);
-
-                    return menuItem;
-                })
-                .toList();
-
-        restaurant.setMenuItems(menuItems);
-
-        Restaurant saved = restaurantRepository.save(restaurant);
-
-        return restaurantMapper.toResponse(saved);
+        response.setOwnerName(request.getOwnerName());
+        response.setOwnerEmail(request.getOwnerEmail());
+        response.setTemporaryPassword(tempPassword);
+        return response;
     }
 
-    // CUSTOMER → Get Restaurants by Menu Item
+
+
+    private String generateTempPassword() {
+
+        return "RESTRO@" + UUID.randomUUID()
+                        .toString()
+                        .substring(0, 5);
+    }
+
+    // UPDATE
     @Override
-    public List<RestaurantResponse> getRestaurantsByMenu(UUID menuId) {
+    public RestaurantResponse updateRestaurant(UUID restaurantId, RestaurantRequest request) {
 
-        MenuItem menuItem = menuRepository.findById(menuId)
-                .orElseThrow(() -> new RuntimeException("Menu item not found"));
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
 
-        List<Restaurant> restaurants =
-                restaurantRepository.findByMenuItemsContaining(menuItem);
-
-        return restaurants.stream()
-                .map(restaurantMapper::toResponse)
-                .toList();
+        restaurantMapper.updateRestaurantFromRequest(request, restaurant);
+        Restaurant updatedRestaurant = restaurantRepository.save(restaurant);
+        return restaurantMapper.toResponse(updatedRestaurant);
     }
 
-    // Get All Restaurants
+    // GET BY ID
+    @Override
+    public RestaurantResponse getRestaurantById(UUID restaurantId) {
+
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+        return restaurantMapper.toResponse(restaurant);
+    }
+
+    // GET ALL
     @Override
     public List<RestaurantResponse> getAllRestaurants() {
+
         return restaurantRepository.findAll()
                 .stream()
                 .map(restaurantMapper::toResponse)
                 .toList();
     }
+
+    // DELETE
+    @Override
+    public void deleteRestaurant(UUID restaurantId) {
+
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+
+        restaurantRepository.delete(restaurant);
+    }
+
 }

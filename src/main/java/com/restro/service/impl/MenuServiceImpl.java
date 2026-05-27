@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.restro.dto.response.MenuDashboardResponse;
 import com.restro.entity.*;
+import com.restro.exceptions.DuplicateResourceException;
 import com.restro.repository.FoodCategoryRepository;
 import com.restro.repository.RestaurantRepository;
 import com.restro.repository.UserRepository;
@@ -58,8 +59,17 @@ public class MenuServiceImpl implements MenuService {
 
         Restaurant restaurant = getLoggedInRestaurant();
 
+        // CHECK DUPLICATE MENU
+        boolean exists = menuRepository.findByRestaurantIdAndItemNameIgnoreCase(
+                        restaurant.getId(),
+                        request.getItemName()).isPresent();
+
+        if (exists) {
+            throw new DuplicateResourceException("Menu already exists");
+        }
+
         FoodCategory category = foodCategoryRepository.findById(request.getCategoryId())
-                        .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new RuntimeException("Category not found"));
 
         MenuItem menuItem = menuMapper.toEntity(request);
         menuItem.setRestaurant(restaurant);
@@ -243,6 +253,19 @@ public class MenuServiceImpl implements MenuService {
         response.setAveragePrice(avgPrice);
 
         return response;
+    }
+
+    // GET ALL MENUS WITHOUT PAGINATION
+    @Override
+    public List<MenuResponse> getAllMenus() {
+
+        Restaurant restaurant = getLoggedInRestaurant();
+
+        return menuRepository
+                .findByRestaurantId(restaurant.getId())
+                .stream()
+                .map(menuMapper::toResponse)
+                .toList();
     }
 
 }

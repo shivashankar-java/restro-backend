@@ -12,11 +12,11 @@ public interface OrderMapper {
 
     @Mapping(target = "orderItemId", source = "id")
     @Mapping(target = "menuId", source = "menuItem.id")
-    @Mapping(target = "menuName", source = "menuItem.itemName")  // ✅ FIXED
+    @Mapping(target = "menuName", source = "menuItem.itemName")
     OrderItemResponse toOrderItemResponse(OrderItem orderItem);
 
     @Mapping(target = "orderId", source = "id")
-    @Mapping(target = "restaurantName", source = "restaurant.name")
+    @Mapping(target = "restaurantName", source = "restaurant.restaurantName")
     @Mapping(target = "items", source = "orderItems")
     @Mapping(target = "status", source = "status")
     OrderResponse toOrderResponse(Order order);

@@ -1,11 +1,13 @@
 package com.restro.mapper;
 
+import com.restro.dto.request.RestaurantAdminRequest;
 import com.restro.dto.request.RestaurantRequest;
 import com.restro.dto.response.RestaurantResponse;
 import com.restro.entity.MenuItem;
 import com.restro.entity.Restaurant;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,22 +15,12 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface RestaurantMapper {
 
-    Restaurant toEntity(RestaurantRequest request);
+    Restaurant toEntity(RestaurantAdminRequest request);
 
-    @Mapping(target = "restaurantId", source = "id")
-    @Mapping(target = "menuNames", expression = "java(mapMenuNames(restaurant.getMenuItems()))")
     RestaurantResponse toResponse(Restaurant restaurant);
 
-    List<RestaurantResponse> toResponseList(List<Restaurant> restaurants);
-
-    default List<String> mapMenuNames(List<MenuItem> menuItems) {
-
-        if (menuItems == null) {
-            return List.of();
-        }
-
-        return menuItems.stream()
-                .map(MenuItem::getItemName)
-                .toList();
-    }
+    void updateRestaurantFromRequest(
+            RestaurantRequest request,
+            @MappingTarget Restaurant restaurant
+    );
 }
