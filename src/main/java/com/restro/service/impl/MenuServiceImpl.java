@@ -135,18 +135,8 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public MenuResponse getMenuById(UUID menuId) {
 
-        Restaurant restaurant = getLoggedInRestaurant();
-
         MenuItem menuItem = menuRepository.findById(menuId)
                 .orElseThrow(() -> new RuntimeException("Menu not found"));
-
-        // SECURITY CHECK
-        if (!menuItem.getRestaurant().getId()
-                .equals(restaurant.getId())) {
-
-            throw new RuntimeException("Unauthorized access");
-        }
-
         return menuMapper.toResponse(menuItem);
     }
 
@@ -154,12 +144,9 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public Page<MenuResponse> getAllMenus(int page, int size) {
 
-        Restaurant restaurant = getLoggedInRestaurant();
-
         Pageable pageable = PageRequest.of(page, size);
 
-        return menuRepository
-                .findByRestaurantId(restaurant.getId(), pageable)
+        return menuRepository.findAll(pageable)
                 .map(menuMapper::toResponse);
     }
 
@@ -167,15 +154,10 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public Page<MenuResponse> searchMenus(String keyword, int page, int size) {
 
-        Restaurant restaurant = getLoggedInRestaurant();
         Pageable pageable = PageRequest.of(page, size);
-
-        return menuRepository
-                .findByRestaurantIdAndItemNameContainingIgnoreCase(
-                        restaurant.getId(),
+        return menuRepository.findByItemNameContainingIgnoreCase(
                         keyword,
-                        pageable
-                )
+                        pageable)
                 .map(menuMapper::toResponse);
     }
 
@@ -183,15 +165,9 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public Page<MenuResponse> getMenusByCategory(String category, int page, int size) {
 
-        Restaurant restaurant = getLoggedInRestaurant();
         Pageable pageable = PageRequest.of(page, size);
 
-        return menuRepository
-                .findByRestaurantIdAndCategory_CategoryNameIgnoreCase(
-                        restaurant.getId(),
-                        category,
-                        pageable
-                )
+        return menuRepository.findByCategory_CategoryNameIgnoreCase(category, pageable)
                 .map(menuMapper::toResponse);
     }
 
@@ -199,15 +175,8 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public Page<MenuResponse> getMenusByFoodType(FoodType foodType, int page, int size) {
 
-        Restaurant restaurant = getLoggedInRestaurant();
         Pageable pageable = PageRequest.of(page, size);
-
-        return menuRepository
-                .findByRestaurantIdAndFoodType(
-                        restaurant.getId(),
-                        foodType,
-                        pageable
-                )
+        return menuRepository.findByFoodType(foodType, pageable)
                 .map(menuMapper::toResponse);
     }
 
@@ -215,10 +184,8 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public Page<MenuResponse> getMenusByStatus(MenuStatus status, int page, int size) {
 
-        Restaurant restaurant = getLoggedInRestaurant();
         Pageable pageable = PageRequest.of(page, size);
-
-        return menuRepository.findByRestaurantIdAndStatus(restaurant.getId(), status, pageable)
+        return menuRepository.findByStatus(status, pageable)
                 .map(menuMapper::toResponse);
     }
 

@@ -20,6 +20,7 @@ public class MenuResponse {
 	private UUID categoryId;
 	private String categoryName;
 	private String imageUrl;
+	private UUID restaurantId;
 
 	public UUID getMenuId() {
 		return menuId;
@@ -99,5 +100,13 @@ public class MenuResponse {
 
 	public void setImageUrl(String imageUrl) {
 		this.imageUrl = imageUrl;
+	}
+
+	public UUID getRestaurantId() {
+		return restaurantId;
+	}
+
+	public void setRestaurantId(UUID restaurantId) {
+		this.restaurantId = restaurantId;
 	}
 }

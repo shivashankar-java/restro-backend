@@ -43,14 +43,12 @@ public class RestaurantController {
     }
 
     // GET BY ID
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{restaurantId}")
     public ResponseEntity<RestaurantResponse> getRestaurantById(@PathVariable UUID restaurantId) {
         return ResponseEntity.ok(restaurantService.getRestaurantById(restaurantId));
     }
 
     // GET ALL
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<RestaurantResponse>> getAllRestaurants() {
         return ResponseEntity.ok(restaurantService.getAllRestaurants());

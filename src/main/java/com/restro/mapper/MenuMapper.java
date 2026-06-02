@@ -20,6 +20,7 @@ public interface MenuMapper {
 
     @Mapping(source = "id", target = "menuId")
     @Mapping(source = "category.categoryId", target = "categoryId")
+    @Mapping(source = "restaurant.id", target = "restaurantId")
     @Mapping(source = "category.categoryName", target = "categoryName")
     MenuResponse toResponse(MenuItem menuItem);
 
