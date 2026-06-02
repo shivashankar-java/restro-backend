@@ -32,6 +32,7 @@ public class SecurityConfig {
 						.requestMatchers("/auth/**", "/api/menu/**",
 								"/api/categories").permitAll()
 
+						.requestMatchers(HttpMethod.GET, "/api/menu/**").permitAll()
 						//  Swagger
 						.requestMatchers(
 								"/swagger-ui/**",
@@ -82,9 +83,6 @@ public class SecurityConfig {
 						.requestMatchers("/api/restaurant/**")
 						.hasRole("RESTAURANT_OWNER")
 
-						// Example:
-						// /api/restaurant/orders
-						// /api/restaurant/menu
 
 						// MENU MANAGEMENT
 

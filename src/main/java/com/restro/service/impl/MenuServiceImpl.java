@@ -259,10 +259,7 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public List<MenuResponse> getAllMenus() {
 
-        Restaurant restaurant = getLoggedInRestaurant();
-
-        return menuRepository
-                .findByRestaurantId(restaurant.getId())
+        return menuRepository.findAll()
                 .stream()
                 .map(menuMapper::toResponse)
                 .toList();
