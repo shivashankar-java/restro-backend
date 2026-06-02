@@ -10,6 +10,7 @@ import java.util.UUID;
 public class CartResponse {
     private UUID cartId;
     private String restaurantName;
+    private UUID restaurantId;
     private List<CartItemResponse> items;
     private BigDecimal subTotal;
     private BigDecimal deliveryFee;
@@ -34,6 +35,14 @@ public class CartResponse {
 
     public void setRestaurantName(String restaurantName) {
         this.restaurantName = restaurantName;
+    }
+
+    public UUID getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(UUID restaurantId) {
+        this.restaurantId = restaurantId;
     }
 
     public List<CartItemResponse> getItems() {

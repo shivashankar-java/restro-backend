@@ -1,70 +1,54 @@
-//package com.restro.controller;
-//
-//import com.restro.dto.request.AddToCartRequest;
-//import com.restro.dto.request.UpdateCartItemRequest;
-//import com.restro.dto.response.CartResponse;
-//import com.restro.service.CartService;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.security.access.prepost.PreAuthorize;
-//import org.springframework.web.bind.annotation.*;
-//
-//import java.util.UUID;
-//
-//@RestController
-//@RequestMapping("/api/cart")
-//public class CartController {
-//
-//    private final CartService cartService;
-//
-//    public CartController(CartService cartService) {
-//        this.cartService = cartService;
-//    }
-//
-//    // CUSTOMER only → Add item to cart
-//    @PreAuthorize("hasRole('CUSTOMER')")
-//    @PostMapping("/add")
-//    public ResponseEntity<CartResponse> addToCart(
-//            @RequestBody AddToCartRequest request) {
-//        return ResponseEntity.ok(cartService.addToCart(request));
-//    }
-//
-//    // CUSTOMER only → Get active cart
-//    @PreAuthorize("hasRole('CUSTOMER')")
-//    @GetMapping
-//    public ResponseEntity<CartResponse> getActiveCart() {
-//
-//        return ResponseEntity.ok(
-//                cartService.getActiveCart()
-//        );
-//    }
-//
-//    // UPDATE CART ITEM QTY
-//    @PreAuthorize("hasRole('CUSTOMER')")
-//    @PutMapping("/item")
-//    public ResponseEntity<CartResponse> updateCartItem(
-//            @RequestBody UpdateCartItemRequest request) {
-//
-//        return ResponseEntity.ok(
-//                cartService.updateItemQuantity(request)
-//        );
-//    }
-//
-//    // REMOVE SINGLE ITEM
-//    @PreAuthorize("hasRole('CUSTOMER')")
-//    @DeleteMapping("/item/{cartItemId}")
-//    public ResponseEntity<CartResponse> removeCartItem(@PathVariable UUID cartItemId) {
-//
-//        return ResponseEntity.ok(
-//                cartService.removeItem(cartItemId)
-//        );
-//    }
-//
-//    // CLEAR CART
-//    @PreAuthorize("hasRole('CUSTOMER')")
-//    @DeleteMapping("/clear")
-//    public ResponseEntity<String> clearCart() {
-//        return ResponseEntity.ok(
-//                cartService.clearCart()
-//        );
-//    }
-//}
+package com.restro.controller;
+
+import com.restro.dto.request.AddToCartRequest;
+import com.restro.dto.request.UpdateCartItemRequest;
+import com.restro.dto.response.CartResponse;
+import com.restro.service.CartService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/cart")
+public class CartController {
+
+    private final CartService cartService;
+
+    public CartController(CartService cartService) {
+        this.cartService = cartService;
+    }
+
+    @PostMapping("/items")
+    public ResponseEntity<CartResponse> addItem(@Valid @RequestBody AddToCartRequest request){
+        CartResponse response = cartService.addItem(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/{cartId}")
+    public ResponseEntity<CartResponse> getCart(@PathVariable UUID cartId) {
+        return ResponseEntity.ok(cartService.getCart(cartId));
+    }
+
+    @PutMapping("/items/{cartItemId}")
+    public ResponseEntity<CartResponse> updateItem(@PathVariable UUID cartItemId,
+                                                   @RequestParam Integer quantity) {
+        return ResponseEntity.ok(cartService.updateItem(cartItemId, quantity));
+    }
+
+    @DeleteMapping("/items/{cartItemId}")
+    public ResponseEntity<Void> removeItem(@PathVariable UUID cartItemId) {
+        cartService.removeItem(cartItemId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{cartId}")
+    public ResponseEntity<Void> clearCart(@PathVariable UUID cartId) {
+        cartService.clearCart(cartId);
+        return ResponseEntity.noContent().build();
+    }
+
+}

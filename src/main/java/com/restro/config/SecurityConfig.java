@@ -29,13 +29,16 @@ public class SecurityConfig {
 				.authorizeHttpRequests(auth -> auth
 
 						//  Public APIs
-						.requestMatchers("/auth/**", "/api/menu/**",
-								"/api/categories").permitAll()
+						.requestMatchers("/auth/**",
+								"/api/menu/**",
+								"/api/categories"
+						).permitAll()
 
 						.requestMatchers(HttpMethod.GET,
 								"/api/menu", "/api/menu/**",
-								"/api/restaurants",
-								"/api/restaurants/**").permitAll()
+								"/api/restaurants", "/api/restaurants/**",
+								"/api/cart", "/api/cart/**"
+								).permitAll()
 
 						//  Swagger
 						.requestMatchers(
@@ -43,6 +46,11 @@ public class SecurityConfig {
 								"/v3/api-docs/**",
 								"/swagger-ui.html"
 						).permitAll()
+
+								// CART PUBLIC
+								.requestMatchers(
+										"/api/cart/**"
+								).permitAll()
 
 						//  ADMIN only
 						.requestMatchers("/admin/**").hasRole("ADMIN")
@@ -54,7 +62,7 @@ public class SecurityConfig {
 						.requestMatchers("/api/categories/**").permitAll()
 
 						//  CUSTOMER
-						.requestMatchers("/api/cart/**").hasRole("CUSTOMER")
+//						.requestMatchers("/api/cart/**").hasRole("CUSTOMER")
 						.requestMatchers("/api/orders/**").hasRole("CUSTOMER")
 
 						// COUPONS

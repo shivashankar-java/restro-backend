@@ -10,14 +10,14 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface CartMapper {
 
-//    @Mapping(target = "cartItemId", source = "cartItem.id")
-//    @Mapping(target = "menuId", source = "cartItem.menuItem.id")
-//    @Mapping(target = "menuName", source = "cartItem.menuItem.name")
-//    CartItemResponse toCartItemResponse(CartItem cartItem);
-//
-//    @Mapping(target = "cartId", source = "cart.id")
-//    @Mapping(target = "restaurantName", source = "cart.restaurant.name")
-//    @Mapping(target = "items", source = "cart.cartItems")
-//    @Mapping(target = "status", source = "cart.status")
-//    CartResponse toCartResponse(Cart cart);
+    @Mapping(source = "id", target = "cartId")
+    @Mapping(source = "restaurant.id", target = "restaurantId")
+    @Mapping(source = "cartItems", target = "items")
+    CartResponse toResponse(Cart cart);
+
+    @Mapping(source = "id", target = "cartItemId")
+    @Mapping(source = "menuItem.id", target = "menuId")
+    @Mapping(source = "menuItem.itemName", target = "menuName")
+    CartItemResponse toItemResponse(CartItem item);
+
 }
